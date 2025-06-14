@@ -1,0 +1,65 @@
+.artisan-dashboard {
+  padding: 2rem;
+  font-family: 'Poppins', sans-serif;
+  background: #fffaf2;
+  min-height: 100vh;
+}
+
+.artisan-dashboard h2 {
+  color: #cc5200;
+  margin-bottom: 1.5rem;
+}
+
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background: #fff3e6;
+  padding: 1.5rem;
+  border-radius: 10px;
+  max-width: 500px;
+  margin-bottom: 2rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+}
+
+.product-form input {
+  padding: 0.6rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.product-form button {
+  background: #cc5200;
+  color: white;
+  border: none;
+  padding: 0.6rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.product-list {
+  list-style: none;
+  padding: 0;
+  max-width: 600px;
+}
+
+.product-item {
+  background: #fff;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-item button {
+  margin-left: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background: #cc5200;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}

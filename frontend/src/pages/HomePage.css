@@ -1,0 +1,319 @@
+/* HomePage.css */
+body {
+  font-family: 'Poppins', sans-serif;
+  background: #fffaf2;
+  margin: 0;
+  padding: 0;
+}
+
+.header {
+  background: #fff3e6;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+  color: #cc5200;
+  margin: 0;
+}
+
+.header a {
+  margin-right: 1rem;
+  color: #cc5200;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.banner {
+  position: relative;
+  background-image: url('../assets/Banner-img.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 60vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 1rem;
+  color: white;
+  overflow: hidden;
+}
+
+/* ✅ Dark overlay to dim the background image */
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* darkens image */
+  z-index: 1;
+}
+
+/* ✅ Banner content stays above the overlay */
+.banner h2,
+.banner p,
+.banner-btn {
+  position: relative;
+  z-index: 2;
+}
+
+.banner h2 {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  animation-delay: 0.2s;
+}
+
+.banner p {
+  font-size: 1.2rem;
+  font-weight: 300;
+  max-width: 600px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  animation-delay: 0.5s;
+}
+
+.banner-btn {
+  margin-top: 1.5rem;
+  background: #cc5200;
+  color: white;
+  padding: 0.7rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  opacity: 0;
+  animation: fadeIn 1s ease-in forwards;
+  animation-delay: 0.8s;
+}
+
+.banner-btn:hover {
+  background: #b34700;
+}
+
+/* Animation keyframes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .banner {
+    padding: 4rem 1rem;
+    min-height: 50vh;
+  }
+
+  .banner h2 {
+    font-size: 1.8rem;
+  }
+
+  .banner p {
+    font-size: 1rem;
+  }
+
+  .banner-btn {
+    font-size: 0.9rem;
+    padding: 0.6rem 1.2rem;
+  }
+}
+
+
+.top-categories {
+  padding: 2rem;
+  text-align: center;
+}
+
+.top-categories h3 {
+  color: #cc5200;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+}
+
+.category-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.category-card {
+  background: #fff3e6;
+  border-radius: 10px;
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #803300;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+}
+
+.category-card:hover {
+  transform: translateY(-3px);
+}
+
+
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+
+.card img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  background-color: white;
+  transition: transform 0.3s ease;
+}
+
+.card:hover img {
+  transform: scale(1.05);
+}
+
+
+.card-content {
+  padding: 1rem;
+}
+
+.card-content h4 {
+  margin: 0 0 0.5rem;
+  color: #333;
+}
+
+.card-content p {
+  margin: 0.25rem 0;
+}
+
+.card-content .price {
+  color: #cc5200;
+  font-weight: bold;
+}
+
+.card-content .view-btn {
+  text-decoration: none;
+  background: #cc5200;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  display: inline-block;
+  font-size: 14px;
+  margin-top: 0.5rem;
+  transition: background 0.3s ease; /* ✅ Add this */
+  
+}
+
+.card-content .view-btn:hover {
+  background: #b34700; /* ✅ Add this */
+}
+.card-content .view-btn:hover {
+  background: #b34700; /* ✅ Add this */
+}
+.view-all-container {
+  text-align: center;      /* ✅ Center the contents */
+  margin: 2rem 0;
+}
+
+.view-all-btn {
+  background: #cc5200;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  font-size: 1rem;
+}
+
+.view-all-btn:hover {
+  background: #b34700;
+}
+
+
+.footer {
+  background-color: lab(83.46% -1.7 -0.6);
+  padding: 2rem 1rem;
+  text-align: center;
+  margin-top: 3rem;
+  color: hsl(27, 89%, 44%);
+}
+
+.footer-content h4 {
+  font-size: 1.3rem;
+  margin-bottom: 0.5rem;
+  color: #cc5200;
+}
+
+.footer-content p {
+  font-size: 0.9rem;
+  margin: 0.5rem 0;
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 1.5rem;
+  margin: 1rem 0;
+}
+
+.footer-links a {
+  color: hsl(243, 100%, 25%);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin: 2rem;
+  justify-content: center;
+}
+
+.filters input,
+.filters select {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-family: 'Poppins', sans-serif;
+}
