@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import './ArtisanDashboard.css'; // Add your CSS styles here
+import '../styles/ArtisanDashboard.css'; // Add your CSS styles here
 
 const ArtisanDashboard = () => {
   const [products, setProducts] = useState([]);

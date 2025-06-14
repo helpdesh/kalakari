@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import './ProductDetailsPage.css';
+import '../styles/ProductDetailsPage.css';
 import { useCart } from '../context/CartContext';
 import { toast } from 'react-toastify';
 
