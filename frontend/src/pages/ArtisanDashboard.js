@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import '../styles/ArtisanDashboard.css'; // Add your CSS styles here
+import { toast } from 'react-toastify';
 
 const ArtisanDashboard = () => {
   const [products, setProducts] = useState([]);
@@ -29,33 +30,49 @@ const ArtisanDashboard = () => {
   };
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    const productData = {
-      title: form.title,
-      description: form.description,
-      price: Number(form.price),
-      image: form.image,
-      category: form.category,
-      artisanId
-    };
+  e.preventDefault();
+  const productData = {
+    title: form.title,
+    description: form.description,
+    price: Number(form.price),
+    image: form.image,
+    category: form.category,
+    artisanId
+  };
 
+  try {
     if (form._id) {
       // Update product
       await axios.put(`http://localhost:5000/api/products/${form._id}`, productData);
+      toast.success('Product updated successfully ✅');
     } else {
       // Create new product
       await axios.post('http://localhost:5000/api/products', productData);
+      toast.success('Product added successfully ✅');
     }
 
     setForm({ title: '', description: '', price: '', image: '', category: '', _id: '' });
     fetchProducts();
-  };
+  } catch (error) {
+    if (error.response?.status === 403) {
+      toast.error(error.response.data.message || 'You are not approved to add products');
+    } else {
+      toast.error('Something went wrong');
+      console.error(error);
+    }
+  }
+};
 
   const handleDelete = async (id) => {
+  try {
     await axios.delete(`http://localhost:5000/api/products/${id}`);
+    toast.success('Product deleted successfully ❌');
     fetchProducts();
-  };
-
+  } catch (error) {
+    toast.error('Error deleting product');
+    console.error(error);
+  }
+};
   const handleEdit = (product) => {
     setForm({
       title: product.title,
@@ -65,7 +82,7 @@ const ArtisanDashboard = () => {
       category: product.category,
       _id: product._id
     });
-  };
+  }
 
   return (
     <div className="artisan-dashboard">

@@ -1,11 +1,23 @@
 const express = require('express');
 const Product = require('../models/Product');
+const User = require('../models/User'); // ✅ Added to check artisan approval
 const router = express.Router();
 
-// ✅ Create a new product
+// ✅ Create a new product (only if artisan is approved)
 router.post('/', async (req, res) => {
   const { title, description, price, image, category, artisanId } = req.body;
+
   try {
+    const artisan = await User.findById(artisanId);
+
+    if (!artisan) {
+      return res.status(404).json({ message: 'Artisan not found' });
+    }
+
+    if (artisan.role === 'artisan' && !artisan.isApproved) {
+      return res.status(403).json({ message: 'Your artisan profile is not approved yet.' });
+    }
+
     const product = new Product({ title, description, price, image, category, artisanId });
     await product.save();
     res.status(201).json(product);

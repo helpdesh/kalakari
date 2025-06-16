@@ -3,16 +3,19 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const authRoutes = require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
+const productRoutes = require('./routes/ProductRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
+app.use('/api/admin', adminRoutes);
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

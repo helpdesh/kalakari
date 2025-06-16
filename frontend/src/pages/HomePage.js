@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect,useRef, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
@@ -10,6 +10,8 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const user = JSON.parse(localStorage.getItem('user')) || null;
+  const [showDropdown, setShowDropdown] = useState(false);
+  const dropdownRef = useRef();
 
   const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
@@ -18,6 +20,17 @@ const HomePage = () => {
     const matchesCategory = selectedCategory ? p.category === selectedCategory : true;
     return matchesTitle && matchesCategory;
   });
+
+
+  useEffect(() => {
+  const handleOutsideClick = (e) => {
+    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+      setShowDropdown(false);
+    }
+  };
+  document.addEventListener('mousedown', handleOutsideClick);
+  return () => document.removeEventListener('mousedown', handleOutsideClick);
+}, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -39,20 +52,31 @@ const HomePage = () => {
       <header className="header">
         <h1>Desi-Etsy 🧵</h1>
         <nav>
-          <Link to="/">Home</Link>
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
+             Home
+          </Link>
           <Link to="/cart">🛒 Cart</Link>
           {user ? (
-            <>
-              <span style={{ marginRight: '1rem', fontWeight: '500' }}>
-                👋 {user.name}
-              </span>
-              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: '#cc5200', cursor: 'pointer' }}>
-                Logout
-              </button>
-            </>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
+          <div className="profile-container" ref={dropdownRef}>
+            <span
+              className="profile-name"
+              onClick={() => setShowDropdown(!showDropdown)}
+            >
+              👋 {user.name} ▾
+            </span>
+
+            {showDropdown && (
+              <div className="dropdown-menu">
+                <Link to="/orders">📦 My Orders</Link>
+                <button onClick={handleLogout}>🚪 Logout</button>
+              </div>
+            )}
+          </div>
+        ) : (
+          <Link to="/login">Login</Link>
+        )}
+
+
         </nav>
       </header>
 
