@@ -68,3 +68,33 @@
   text-decoration: underline;
 }
 
+
+.password-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.password-input {
+  width: 100%;
+  padding: 0.75rem 2.5rem 0.75rem 0.75rem; /* left, right padding */
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+
+.toggle-icon {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  color: #666;
+  width: 24px;
+}
+

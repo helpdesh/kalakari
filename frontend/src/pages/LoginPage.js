@@ -8,6 +8,7 @@ import { toast } from 'react-toastify';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async e => {
@@ -41,7 +42,7 @@ const LoginPage = () => {
       <div className="login-card">
         <h2>Welcome Back 👋</h2>
         <p>Please login to continue</p>
-        <form onSubmit={handleLogin}>
+         <form onSubmit={handleLogin} style={{ width: '100%' }}>
           <input
             type="email"
             placeholder="Email Address"
@@ -49,15 +50,30 @@ const LoginPage = () => {
             onChange={e => setEmail(e.target.value)}
             required
           />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={e => setPassword(e.target.value)}
-            required
-          />
+
+          <div className="password-wrapper">
+            {/* password input with toggle */}
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              value={password}
+              onChange={e => setPassword(e.target.value)}
+              required
+              className="password-input"
+            />
+
+            <span
+              className="toggle-icon"
+              onClick={() => setShowPassword(prev => !prev)}
+              role="button"
+            >
+              {showPassword ? '🙈' : '👁️'}
+            </span>
+          </div>
+          
           <button type="submit">Login</button>
         </form>
+
         <p className="register-link">
           New user? <Link to="/register">Register here</Link>
         </p>
