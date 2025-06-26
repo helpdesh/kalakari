@@ -20,7 +20,8 @@ const LoginPage = () => {
     });
 
     localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify(res.data.user));
+    localStorage.setItem('user', JSON.stringify({ ...res.data.user, _id: res.data.user._id || res.data.user.id }));
+
 
     toast.success('Login successful!');
 

@@ -7,6 +7,9 @@ const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/ProductRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 const emailOtpRoutes = require('./routes/emailOtpRoutes');
+const orderRoutes = require('./routes/OrderRoutes');
+const paymentRoutes = require('./routes/paymentRoutes');
+
 
 dotenv.config();
 const app = express();
@@ -19,6 +22,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/otp', emailOtpRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/payment', require('./routes/paymentRoutes'));
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

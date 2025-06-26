@@ -8,6 +8,8 @@ import CartPage from './pages/CartPage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
+import CategoryPage from './pages/CategoryPage';
+import MyOrdersPage from './pages/MyOrdersPage';
 
 function App() {
   return (
@@ -18,6 +20,8 @@ function App() {
         <Route path="/product/:id" element={<ProductDetailsPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+        <Route path="/category/:categoryName" element={<CategoryPage />} />
+        <Route path="/orders" element={<MyOrdersPage />} />
 
         {/* Protected route: Customer/Artisan/Admin can access cart */}
         <Route

@@ -1,19 +1,18 @@
-import React, { useEffect,useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 
+
 const HomePage = () => {
   const [showAll, setShowAll] = useState(false);
   const [products, setProducts] = useState([]);
-  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
-  const user = JSON.parse(localStorage.getItem('user')) || null;
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef();
-
-  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
+  const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user')) || null;
 
   const filteredProducts = products.filter(p => {
     const matchesTitle = p.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -21,16 +20,25 @@ const HomePage = () => {
     return matchesTitle && matchesCategory;
   });
 
+  const categories = [...new Set(products.map(p => p.category).filter(Boolean))];
 
   useEffect(() => {
-  const handleOutsideClick = (e) => {
-    if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
-      setShowDropdown(false);
-    }
-  };
-  document.addEventListener('mousedown', handleOutsideClick);
-  return () => document.removeEventListener('mousedown', handleOutsideClick);
-}, []);
+    const fetchFeatured = async () => {
+      const res = await axios.get('http://localhost:5000/api/products');
+      setProducts(res.data); // full list for filter/search
+    };
+    fetchFeatured();
+  }, []);
+
+  useEffect(() => {
+    const handleOutsideClick = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => document.removeEventListener('mousedown', handleOutsideClick);
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -38,13 +46,9 @@ const HomePage = () => {
     navigate('/');
   };
 
-  useEffect(() => {
-    const fetchApproved = async () => {
-      const res = await axios.get('http://localhost:5000/api/products');
-      setProducts(res.data);
-    };
-    fetchApproved();
-  }, []);
+  const handleCategoryClick = (cat) => {
+    navigate(`/category/${cat}`);
+  };
 
   return (
     <div className="homepage">
@@ -52,31 +56,23 @@ const HomePage = () => {
       <header className="header">
         <h1>Desi-Etsy 🧵</h1>
         <nav>
-          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
-             Home
-          </Link>
+          <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>Home</Link>
           <Link to="/cart">🛒 Cart</Link>
           {user ? (
-          <div className="profile-container" ref={dropdownRef}>
-            <span
-              className="profile-name"
-              onClick={() => setShowDropdown(!showDropdown)}
-            >
-              👋 {user.name} ▾
-            </span>
-
-            {showDropdown && (
-              <div className="dropdown-menu">
-                <Link to="/orders">📦 My Orders</Link>
-                <button onClick={handleLogout}>🚪 Logout</button>
-              </div>
-            )}
-          </div>
-        ) : (
-          <Link to="/login">Login</Link>
-        )}
-
-
+            <div className="profile-container" ref={dropdownRef}>
+              <span className="profile-name" onClick={() => setShowDropdown(!showDropdown)}>
+                👋 {user.name} ▾
+              </span>
+              {showDropdown && (
+                <div className="dropdown-menu">
+                  <Link to="/orders">📦 My Orders</Link>
+                  <button onClick={handleLogout}>🚪 Logout</button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <Link to="/login">Login</Link>
+          )}
         </nav>
       </header>
 
@@ -94,11 +90,11 @@ const HomePage = () => {
       <div className="top-categories">
         <h3>🧵 Top Categories</h3>
         <div className="category-grid">
-          <div className="category-card">Home Decor</div>
-          <div className="category-card">Handmade Jewelry</div>
-          <div className="category-card">Kitchen</div>
-          <div className="category-card">Storage</div>
-          <div className="category-card">Wood Craft</div>
+          {categories.map((cat, index) => (
+            <div key={index} className="category-card" onClick={() => handleCategoryClick(cat)}>
+              {cat}
+            </div>
+          ))}
         </div>
       </div>
 
@@ -118,7 +114,8 @@ const HomePage = () => {
         </select>
       </div>
 
-      {/* Product Grid */}
+      {/* Featured Products */}
+      <h3 className="section-title">✨ Featured Products</h3>
       <div className="grid-container">
         {(showAll ? filteredProducts : filteredProducts.slice(0, 8)).map(p => (
           <div className="card" key={p._id}>
@@ -133,22 +130,14 @@ const HomePage = () => {
         ))}
       </div>
 
-      {/* View All Button */}
-      {filteredProducts.length > 8 && !showAll && (
+      {/* View All / Less */}
+      {filteredProducts.length > 8 && (
         <div className="view-all-container">
-        <button className="view-all-btn" onClick={() => setShowAll(true)}>
-        View All Products
-      </button>
-        </div>
-    )}
-      {showAll && (
-        <div className="view-all-container">
-          <button className="view-all-btn" onClick={() => setShowAll(false)}>
-            Show Less
+          <button className="view-all-btn" onClick={() => setShowAll(!showAll)}>
+            {showAll ? 'Show Less' : 'View All Products'}
           </button>
         </div>
       )}
-    
 
       {/* Footer */}
       <footer className="footer">
