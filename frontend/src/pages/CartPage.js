@@ -144,14 +144,15 @@ const CartPage = () => {
 };
 
   return (
-    <div className="cart-page">
-      <h2>Your Cart 🛒</h2>
+  <div className="cart-page">
+    <h2>Your Cart 🛒</h2>
 
-      {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <div className="cart-layout">
-          <div className="cart-items-section">
+    {cartItems.length === 0 ? (
+      <p>Your cart is empty.</p>
+    ) : (
+      <div className="cart-layout">
+        <div className="cart-items-section">
+          {!showDeliveryForm ? (
             <ul className="cart-list">
               {cartItems.map((item, index) => (
                 <li className="cart-item" key={index}>
@@ -169,43 +170,40 @@ const CartPage = () => {
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div className="checkout-summary">
-            <h3>Order Summary</h3>
-            <p>Total Items: {totalItems}</p>
-            <p>Total Price: ₹{totalPrice}</p>
-
-            {!showDeliveryForm && (
-              <button className="checkout-btn" onClick={() => setShowDeliveryForm(true)}>
-                Place Order
-              </button>
-            )}
-
-            {showDeliveryForm && (
-              <div className="delivery-form">
-                <h3>Delivery Address 🏠</h3>
-                <input type="text" placeholder="Full Name" value={deliveryDetails.name} onChange={e => setDeliveryDetails({ ...deliveryDetails, name: e.target.value })} />
-                <input type="tel" placeholder="Mobile Number" value={deliveryDetails.mobile} onChange={e => setDeliveryDetails({ ...deliveryDetails, mobile: e.target.value })} />
-                <input type="text" placeholder="Pincode" value={deliveryDetails.pincode} onChange={e => setDeliveryDetails({ ...deliveryDetails, pincode: e.target.value })} />
-                <input type="text" placeholder="State" value={deliveryDetails.state} onChange={e => setDeliveryDetails({ ...deliveryDetails, state: e.target.value })} />
-                <input type="text" placeholder="City" value={deliveryDetails.city} onChange={e => setDeliveryDetails({ ...deliveryDetails, city: e.target.value })} />
-                <textarea placeholder="Flat / Area / Landmark" rows="3" value={deliveryDetails.address} onChange={e => setDeliveryDetails({ ...deliveryDetails, address: e.target.value })}></textarea>
-
-                <select value={deliveryDetails.paymentMode} onChange={e => setDeliveryDetails({ ...deliveryDetails, paymentMode: e.target.value })}>
-                  <option value="">Select Payment Mode</option>
-                  <option value="cod">Cash on Delivery</option>
-                  <option value="upi">Razorpay</option>
-                </select>
-
-                <button className="confirm-btn" onClick={handleFinalSubmit}>Confirm Order</button>
-              </div>
-            )}
-          </div>
+          ) : (
+            <div className="delivery-form">
+              <h3>Delivery Address 🏠</h3>
+              <input type="text" placeholder="Full Name" value={deliveryDetails.name} onChange={e => setDeliveryDetails({ ...deliveryDetails, name: e.target.value })} />
+              <input type="tel" placeholder="Mobile Number" value={deliveryDetails.mobile} onChange={e => setDeliveryDetails({ ...deliveryDetails, mobile: e.target.value })} />
+              <input type="text" placeholder="Pincode" value={deliveryDetails.pincode} onChange={e => setDeliveryDetails({ ...deliveryDetails, pincode: e.target.value })} />
+              <input type="text" placeholder="State" value={deliveryDetails.state} onChange={e => setDeliveryDetails({ ...deliveryDetails, state: e.target.value })} />
+              <input type="text" placeholder="City" value={deliveryDetails.city} onChange={e => setDeliveryDetails({ ...deliveryDetails, city: e.target.value })} />
+              <textarea placeholder="Flat / Area / Landmark" rows="3" value={deliveryDetails.address} onChange={e => setDeliveryDetails({ ...deliveryDetails, address: e.target.value })}></textarea>
+              <select value={deliveryDetails.paymentMode} onChange={e => setDeliveryDetails({ ...deliveryDetails, paymentMode: e.target.value })}>
+                <option value="">Select Payment Mode</option>
+                <option value="cod">Cash on Delivery</option>
+                <option value="upi">Razorpay</option>
+              </select>
+              <button className="confirm-btn" onClick={handleFinalSubmit}>Confirm Order</button>
+            </div>
+          )}
         </div>
-      )}
-    </div>
-  );
-};
+
+        <div className="checkout-summary">
+          <h3>Order Summary</h3>
+          <p>Total Items: {totalItems}</p>
+          <p>Total Price: ₹{totalPrice}</p>
+
+          {!showDeliveryForm && (
+            <button className="checkout-btn" onClick={() => setShowDeliveryForm(true)}>
+              Place Order
+            </button>
+          )}
+        </div>
+      </div>
+    )}
+  </div>
+);
+} 
 
 export default CartPage;

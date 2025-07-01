@@ -28,7 +28,6 @@ router.post('/', async (req, res) => {
 
 
 
-// Get Orders by User
 router.get('/user/:id', async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.id }).populate('items.productId');
@@ -37,6 +36,7 @@ router.get('/user/:id', async (req, res) => {
     res.status(500).json({ message: 'Failed to fetch orders', error: err });
   }
 });
+
 
 // Cancel an order
 router.put('/:id/cancel', async (req, res) => {
