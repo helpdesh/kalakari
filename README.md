@@ -83,7 +83,11 @@ cd frontend && npm install
 cd ../backend && npm install
 
 
-Run both frontend and backend:
+Run
+frontend
+>> npm start
+Backend
+>> npx nodemon server.js
 
 npm run dev
 
