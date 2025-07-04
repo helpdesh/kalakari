@@ -76,46 +76,47 @@ const CartPage = () => {
   };
 
   const handlePayment = async () => {
-    try {
-      const res = await axios.post('http://localhost:5000/api/payment/order', {
-        amount: totalPrice * 100,
-      });
+  try {
+    const res = await axios.post('http://localhost:5000/api/payment/order', {
+      amount: totalPrice, // not multiplied by 100 here
+    });
 
-      const { order } = res.data;
+    const order = res.data; // ✅ this is correct now since backend sends full order
 
-      const options = {
-        key: 'rzp_test_LOiqgNY2f5M6Kw',
-        amount: order.amount,
-        currency: 'INR',
-        name: 'Desi-Etsy',
-        description: 'Order Payment',
-        order_id: order.id,
-        handler: async function (response) {
-          await saveOrder('Paid');
+    const options = {
+      key: 'rzp_test_p5bmclWL1NpERt', // ✅ use your new Razorpay test key
+      amount: order.amount,            // in paise
+      currency: 'INR',
+      name: 'Desi-Etsy',
+      description: 'Order Payment',
+      order_id: order.id,              // ✅ Razorpay order_id
+      handler: async function (response) {
+        await saveOrder('Paid');
+      },
+      prefill: {
+        name: user?.name || '',
+        email: user?.email || '',
+      },
+      theme: { color: '#cc5200' },
+      modal: {
+        ondismiss: function () {
+          toast.warning('Payment cancelled');
         },
-        prefill: {
-          name: user?.name || '',
-          email: user?.email || '',
-        },
-        theme: { color: '#cc5200' },
-        modal: {
-          ondismiss: function () {
-            toast.warning('Payment cancelled');
-          },
-        },
-      };
+      },
+    };
 
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function (response) {
-        toast.error("❌ Payment Failed: " + response.error.description);
-      });
+    const rzp = new window.Razorpay(options);
+    rzp.on('payment.failed', function (response) {
+      toast.error("❌ Payment Failed: " + response.error.description);
+    });
 
-      rzp.open();
-    } catch (error) {
-      toast.error('Payment initiation failed');
-      console.error('Payment Error:', error);
-    }
-  };
+    rzp.open();
+  } catch (error) {
+    toast.error('Payment initiation failed');
+    console.error('Payment Error:', error.response?.data || error.message);
+  }
+};
+
 
   const handleFinalSubmit = () => {
     const { name, mobile, address, paymentMode, pincode, state, city } = deliveryDetails;

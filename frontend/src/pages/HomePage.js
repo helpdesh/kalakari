@@ -106,7 +106,7 @@ const HomePage = () => {
             <button
               key={index}
               onClick={() => handleCategoryClick(cat)}
-              className="bg-white border rounded px-4 py-2 shadow hover:bg-orange-50"
+              className="bg-white border rounded px-4 py-2 shadow transition-transform duration-300 hover:scale-105 hover:bg-orange-100"
             >
               {cat}
             </button>
@@ -140,7 +140,10 @@ const HomePage = () => {
         <h3 className="text-xl font-semibold mb-4">✨ Featured Products</h3>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {(showAll ? filteredProducts : filteredProducts.slice(0, 8)).map(p => (
-            <div key={p._id} className="bg-white rounded shadow overflow-hidden">
+            <div
+              key={p._id}
+              className="bg-white rounded shadow overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg"
+            >
               <img src={p.image} alt={p.title} className="w-full h-48 object-cover" />
               <div className="p-4">
                 <h4 className="font-semibold text-lg">{p.title}</h4>

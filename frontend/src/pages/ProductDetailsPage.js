@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { toast } from 'react-toastify';
@@ -8,6 +8,7 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
   const { cartItems, addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -21,7 +22,13 @@ const ProductDetailsPage = () => {
 
   const alreadyInCart = cartItems.some(item => item._id === product._id);
 
-  const handleAddToCart = () => {
+    const handleAddToCart = () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) {
+      toast.info('Please login to add items to cart');
+      navigate('/login');
+      return;
+    }
     if (alreadyInCart) {
       toast.warn('Product already in cart!');
     } else {
