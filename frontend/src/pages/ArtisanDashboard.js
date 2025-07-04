@@ -86,15 +86,17 @@ const fetchOrders = async () => {
   };
 
   const handleEdit = (product) => {
-    setForm({
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      image: product.image,
-      category: product.category,
-      _id: product._id
-    });
-  };
+  setForm({
+    title: product.title,
+    description: product.description,
+    price: product.price,
+    image: product.image,
+    category: product.category,
+    _id: product._id
+  });
+  toast.info('Editing product...');
+};
+
 
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {

@@ -27,14 +27,16 @@ const CartPage = () => {
     const updated = cartItems.map(item =>
       item._id === id ? { ...item, quantity: item.quantity + 1 } : item
     );
+    toast.info('Quantity increased');
     setCartItems(updated);
     localStorage.setItem('cart', JSON.stringify(updated));
   };
-
+  
   const decreaseQuantity = (id) => {
     const updated = cartItems.map(item =>
       item._id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
     );
+    toast.info('Quantity decreased');
     setCartItems(updated);
     localStorage.setItem('cart', JSON.stringify(updated));
   };
@@ -62,6 +64,17 @@ const CartPage = () => {
       console.error(err);
     }
   };
+
+  const handleRemove = (id) => {
+  removeFromCart(id);
+  toast.success('Item removed from cart');
+};
+
+const handlePlaceOrder = () => {
+  setShowDeliveryForm(true);
+  toast.info('Enter your delivery details');
+};
+
 
   const handlePayment = async () => {
     try {
@@ -167,7 +180,7 @@ const CartPage = () => {
                         <span>{item.quantity}</span>
                         <button onClick={() => increaseQuantity(item._id)}>+</button>
                       </div>
-                      <button className="remove-btn" onClick={() => removeFromCart(item._id)}>Remove</button>
+                      <button className="remove-btn" onClick={() => handleRemove(item._id)}>Remove</button>
                     </div>
                   </li>
                 ))}
@@ -197,7 +210,7 @@ const CartPage = () => {
             <p>Total Price: ₹{totalPrice}</p>
 
             {!showDeliveryForm && (
-              <button className="checkout-btn" onClick={() => setShowDeliveryForm(true)}>
+              <button className="checkout-btn" onClick={handlePlaceOrder}>
                 Place Order
               </button>
             )}

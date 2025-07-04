@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../styles/AdminDashboard.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import NavBar from '../components/NavBar';
 
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
@@ -87,6 +88,7 @@ const AdminDashboard = () => {
   };
 
   return (
+    
     <div className="admin-dashboard">
       <h2>🛠️ Admin Dashboard</h2>
       <p>Review and manage artisan products and accounts</p>

@@ -10,10 +10,15 @@ import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import CategoryPage from './pages/CategoryPage';
 import MyOrdersPage from './pages/MyOrdersPage';
+import NavBar from './components/NavBar';
+import { ToastContainer } from 'react-toastify'; // ✅ IMPORT
+import 'react-toastify/dist/ReactToastify.css'; // ✅ STYLE
 
 function App() {
   return (
     <Router>
+      <NavBar />
+      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ ADD TOAST CONTAINER */}
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<HomePage />} />
@@ -43,7 +48,7 @@ function App() {
           }
         />
 
-        {/* Optional: Protect artisan dashboard too if needed */}
+        {/* Protected route: Artisan only */}
         <Route
           path="/artisan/dashboard"
           element={

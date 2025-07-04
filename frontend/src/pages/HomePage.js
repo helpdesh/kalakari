@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
-
+import { toast } from 'react-toastify'; // ✅ Import toast
 
 const HomePage = () => {
   const [showAll, setShowAll] = useState(false);
@@ -24,8 +24,12 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchFeatured = async () => {
-      const res = await axios.get('http://localhost:5000/api/products');
-      setProducts(res.data); // full list for filter/search
+      try {
+        const res = await axios.get('http://localhost:5000/api/products');
+        setProducts(res.data);
+      } catch (err) {
+        toast.error('Failed to load products');
+      }
     };
     fetchFeatured();
   }, []);
@@ -43,6 +47,7 @@ const HomePage = () => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    toast.success('Logged out successfully ✅'); // ✅ Toast on logout
     navigate('/');
   };
 
