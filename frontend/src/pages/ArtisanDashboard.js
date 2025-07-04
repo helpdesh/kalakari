@@ -16,6 +16,7 @@ const ArtisanDashboard = () => {
     _id: ''
   });
 
+
   const user = JSON.parse(localStorage.getItem('user'));
   const artisanId = user?._id;
 
@@ -25,6 +26,7 @@ const ArtisanDashboard = () => {
       fetchOrders();
     }
   }, []);
+
 
   const fetchProducts = async () => {
     const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
