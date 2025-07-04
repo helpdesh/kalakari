@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import '../index.css';
+import '../index.css'; // Ensure you have this CSS file for styling
 const RegisterPage = () => {
   const [form, setForm] = useState({
     name: '',
@@ -61,12 +61,10 @@ const RegisterPage = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-tr from-indigo-100 to-pink-100 px-4">
-      <div className="w-full max-w-md bg-white shadow-lg rounded-lg p-6 space-y-6">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold">Create an Account ✨</h2>
-          <p className="text-gray-500">Register to explore Desi-Etsy</p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-100 to-pink-100 px-4">
+      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <h2 className="text-2xl font-bold text-orange-600 text-center mb-2">Create an Account ✨</h2>
+        <p className="text-gray-600 text-center mb-6">Register to explore Desi-Etsy</p>
 
         {step === 1 ? (
           <form
@@ -82,15 +80,16 @@ const RegisterPage = () => {
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
               required
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
+
             <input
               type="email"
               placeholder="Email"
               value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })}
               required
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
 
             <div className="relative">
@@ -100,24 +99,24 @@ const RegisterPage = () => {
                 value={form.password}
                 onChange={e => setForm({ ...form, password: e.target.value })}
                 required
-                className="w-full border rounded px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
               />
               <span
-                className="absolute right-3 top-2.5 cursor-pointer text-xl"
                 onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-2.5 cursor-pointer text-lg"
               >
                 {showPassword ? '🙈' : '👁️'}
               </span>
             </div>
 
             {form.password && getPasswordError(form.password) && (
-              <p className="text-red-600 text-sm">{getPasswordError(form.password)}</p>
+              <p className="text-sm text-red-600">{getPasswordError(form.password)}</p>
             )}
 
             <select
               value={form.role}
               onChange={e => setForm({ ...form, role: e.target.value })}
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
             >
               <option value="customer">Customer</option>
               <option value="artisan">Artisan</option>
@@ -126,9 +125,9 @@ const RegisterPage = () => {
 
             <button
               type="submit"
-              className="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-2 rounded font-medium"
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-semibold transition"
             >
-              Send OTP
+              Register
             </button>
           </form>
         ) : (
@@ -138,20 +137,22 @@ const RegisterPage = () => {
               placeholder="Enter OTP sent to email"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="w-full border rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
             <button
               onClick={handleVerifyOtp}
-              className="w-full bg-green-600 hover:bg-green-700 text-white py-2 rounded font-medium"
+              className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-semibold transition"
             >
               Verify & Create Account
             </button>
           </div>
         )}
 
-        <p className="text-center text-gray-600">
+        <p className="text-sm text-center mt-6 text-gray-600">
           Already have an account?{' '}
-          <Link to="/login" className="text-indigo-600 hover:underline">Login here</Link>
+          <Link to="/login" className="text-orange-600 hover:underline">
+            Login here
+          </Link>
         </p>
       </div>
     </div>

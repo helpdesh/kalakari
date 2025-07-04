@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../index.css';
+import '../index.css'; // Ensure you have this CSS file for styling
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
@@ -76,33 +76,31 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4">
-      <h2 className="text-3xl font-bold mb-2 text-center">🛠️ Admin Dashboard</h2>
-      <p className="text-center text-gray-500 mb-6">Review and manage artisan products and accounts</p>
+    <div className="min-h-screen bg-gray-100 p-6 text-gray-800">
+      <h2 className="text-3xl font-bold text-orange-600 mb-2">🛠️ Admin Dashboard</h2>
+      <p className="mb-6 text-gray-600">Review and manage artisan products and accounts</p>
 
       {/* Tabs */}
-      <div className="flex justify-center gap-4 mb-6">
+      <div className="flex gap-4 mb-6">
         <button
-          className={`px-4 py-2 rounded-md font-medium ${
-            activeTab === 'products' ? 'bg-blue-600 text-white' : 'bg-gray-100'
+          className={`px-4 py-2 rounded font-medium ${
+            activeTab === 'products'
+              ? 'bg-orange-600 text-white'
+              : 'bg-white border border-orange-300 text-orange-600'
           }`}
           onClick={() => setActiveTab('products')}
         >
-          📦 Product Requests
-          <span className="ml-2 inline-block bg-white text-blue-600 rounded-full px-2 text-sm">
-            {products.length}
-          </span>
+          📦 Product Requests <span className="ml-1 bg-white text-orange-600 font-bold px-2 py-0.5 rounded-full">{products.length}</span>
         </button>
         <button
-          className={`px-4 py-2 rounded-md font-medium ${
-            activeTab === 'artisans' ? 'bg-blue-600 text-white' : 'bg-gray-100'
+          className={`px-4 py-2 rounded font-medium ${
+            activeTab === 'artisans'
+              ? 'bg-orange-600 text-white'
+              : 'bg-white border border-orange-300 text-orange-600'
           }`}
           onClick={() => setActiveTab('artisans')}
         >
-          👥 Artisan Requests
-          <span className="ml-2 inline-block bg-white text-blue-600 rounded-full px-2 text-sm">
-            {unapprovedArtisans.length}
-          </span>
+          👥 Artisan Requests <span className="ml-1 bg-white text-orange-600 font-bold px-2 py-0.5 rounded-full">{unapprovedArtisans.length}</span>
         </button>
       </div>
 
@@ -113,29 +111,27 @@ const AdminDashboard = () => {
           {products.length === 0 ? (
             <p className="text-gray-500">No pending products 🚫</p>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((p) => (
-                <div key={p._id} className="bg-white rounded-lg shadow-md overflow-hidden">
-                  <img src={p.image} alt={p.title} className="h-40 w-full object-cover" />
-                  <div className="p-4 space-y-2">
-                    <h4 className="text-lg font-semibold">{p.title}</h4>
-                    <p className="text-sm text-gray-500">Category: {p.category}</p>
-                    <p className="text-sm text-gray-500">Price: ₹{p.price}</p>
-                    <p className="text-sm text-gray-500">Artisan: {p.artisanId?.name || 'Unknown'}</p>
-                    <div className="flex gap-2 mt-2">
-                      <button
-                        className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
-                        onClick={() => handleApproveProduct(p._id)}
-                      >
-                        Approve ✅
-                      </button>
-                      <button
-                        className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
-                        onClick={() => handleRejectProduct(p._id)}
-                      >
-                        Reject ❌
-                      </button>
-                    </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+              {products.map(p => (
+                <div key={p._id} className="bg-white shadow rounded p-4">
+                  <img src={p.image} alt={p.title} className="w-full h-48 object-cover rounded mb-3" />
+                  <h4 className="font-semibold">{p.title}</h4>
+                  <p className="text-sm text-gray-600">Category: {p.category}</p>
+                  <p className="text-sm text-gray-600">Price: ₹{p.price}</p>
+                  <p className="text-sm text-gray-600 mb-2">Artisan: {p.artisanId?.name || 'Unknown'}</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleApproveProduct(p._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                    >
+                      Approve ✅
+                    </button>
+                    <button
+                      onClick={() => handleRejectProduct(p._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Reject ❌
+                    </button>
                   </div>
                 </div>
               ))}
@@ -152,22 +148,25 @@ const AdminDashboard = () => {
             <p className="text-gray-500">No pending artisans 🚫</p>
           ) : (
             <ul className="space-y-4">
-              {unapprovedArtisans.map((user) => (
-                <li key={user._id} className="bg-white shadow-md rounded-lg p-4 flex justify-between items-center">
+              {unapprovedArtisans.map(user => (
+                <li
+                  key={user._id}
+                  className="bg-white shadow rounded flex justify-between items-center p-4"
+                >
                   <div>
-                    <p className="font-medium">{user.name}</p>
-                    <p className="text-gray-500 text-sm">{user.email}</p>
+                    <p className="font-semibold">{user.name}</p>
+                    <p className="text-sm text-gray-600">{user.email}</p>
                   </div>
                   <div className="flex gap-2">
                     <button
-                      className="px-3 py-1 bg-green-600 text-white rounded hover:bg-green-700"
                       onClick={() => handleApproveArtisan(user._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
                     >
                       Approve ✅
                     </button>
                     <button
-                      className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700"
                       onClick={() => handleRejectArtisan(user._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
                     >
                       Reject ❌
                     </button>

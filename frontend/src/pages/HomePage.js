@@ -2,8 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import '../index.css';
-import BannerImg from '../assets/Banner-img.jpg'; // Adjust the path as necessary
+import bannerImg from '../assets/Banner-img.jpg'; // ✅ import from src/assets
 
 const HomePage = () => {
   const [showAll, setShowAll] = useState(false);
@@ -25,8 +24,12 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchFeatured = async () => {
-      const res = await axios.get('http://localhost:5000/api/products');
-      setProducts(res.data);
+      try {
+        const res = await axios.get('http://localhost:5000/api/products');
+        setProducts(res.data);
+      } catch (err) {
+        toast.error('Failed to load products');
+      }
     };
     fetchFeatured();
   }, []);
@@ -44,7 +47,7 @@ const HomePage = () => {
   const handleLogout = () => {
     localStorage.removeItem('user');
     localStorage.removeItem('token');
-    toast.success('Logged out successfully');
+    toast.success('Logged out successfully ✅');
     navigate('/');
   };
 
@@ -83,23 +86,17 @@ const HomePage = () => {
 
       {/* Banner */}
       <div
-  className="relative bg-cover bg-center h-60 md:h-96"
-  style={{ backgroundImage: `url(${BannerImg})` }}
->
-  <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-white text-center">
-    <h2 className="text-2xl md:text-4xl font-bold mb-2">Not Just Handmade. Heartmade.</h2>
-    <p className="mb-4 max-w-md">
-      Explore art you can feel — straight from the hands of India’s finest creators. 🧵🎨
-    </p>
-    <button
-      onClick={() => navigate('/cart')}
-      className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded text-white"
-    >
-      Shop Now
-    </button>
-  </div>
-</div>
-
+        className="relative bg-cover bg-center h-60 md:h-96"
+        style={{ backgroundImage: `url(${bannerImg})` }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-white text-center">
+          <h2 className="text-2xl md:text-4xl font-bold mb-2">Not Just Handmade. Heartmade.</h2>
+          <p className="mb-4 max-w-md">Explore art you can feel — straight from the hands of India’s finest creators. 🧵🎨</p>
+          <button onClick={() => navigate('/cart')} className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded text-white">
+            Shop Now
+          </button>
+        </div>
+      </div>
 
       {/* Categories */}
       <div className="px-4 py-8">
