@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/AdminDashboard.css';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import '../index.css'; // Ensure you have this CSS file for styling
 const AdminDashboard = () => {
   const [activeTab, setActiveTab] = useState('products');
   const [products, setProducts] = useState([]);
@@ -14,29 +13,24 @@ const AdminDashboard = () => {
     fetchUnapprovedArtisans();
   }, []);
 
-  // Fetch unapproved products
   const fetchUnapprovedProducts = async () => {
     try {
       const res = await axios.get('http://localhost:5000/api/products/unapproved');
       setProducts(res.data);
     } catch (err) {
       toast.error('Failed to fetch products');
-      console.error(err);
     }
   };
 
-  // Fetch unapproved artisans
   const fetchUnapprovedArtisans = async () => {
     try {
       const res = await axios.get('http://localhost:5000/api/admin/unapproved-artisans');
       setUnapprovedArtisans(res.data);
     } catch (err) {
       toast.error('Failed to fetch artisans');
-      console.error(err);
     }
   };
 
-  // Product actions
   const handleApproveProduct = async (id) => {
     try {
       await axios.patch(`http://localhost:5000/api/products/approve/${id}`, { isApproved: true });
@@ -44,7 +38,6 @@ const AdminDashboard = () => {
       fetchUnapprovedProducts();
     } catch (err) {
       toast.error('Error approving product');
-      console.error(err);
     }
   };
 
@@ -56,12 +49,10 @@ const AdminDashboard = () => {
         fetchUnapprovedProducts();
       } catch (err) {
         toast.error('Error rejecting product');
-        console.error(err);
       }
     }
   };
 
-  // Artisan actions
   const handleApproveArtisan = async (id) => {
     try {
       await axios.patch(`http://localhost:5000/api/admin/approve-artisan/${id}`);
@@ -69,7 +60,6 @@ const AdminDashboard = () => {
       fetchUnapprovedArtisans();
     } catch (err) {
       toast.error('Error approving artisan');
-      console.error(err);
     }
   };
 
@@ -81,54 +71,67 @@ const AdminDashboard = () => {
         fetchUnapprovedArtisans();
       } catch (err) {
         toast.error('Error rejecting artisan');
-        console.error(err);
       }
     }
   };
 
   return (
-    <div className="admin-dashboard">
-      <h2>🛠️ Admin Dashboard</h2>
-      <p>Review and manage artisan products and accounts</p>
+    <div className="min-h-screen bg-gray-100 p-6 text-gray-800">
+      <h2 className="text-3xl font-bold text-orange-600 mb-2">🛠️ Admin Dashboard</h2>
+      <p className="mb-6 text-gray-600">Review and manage artisan products and accounts</p>
 
       {/* Tabs */}
-      <div className="admin-tabs">
-      <button
-        className={activeTab === 'products' ? 'active' : ''}
-        onClick={() => setActiveTab('products')}
-      >
-        📦 Product Requests <span className="badge">{products.length}</span>
-      </button>
-
-      <button
-        className={activeTab === 'artisans' ? 'active' : ''}
-        onClick={() => setActiveTab('artisans')}
-      >
-        👥 Artisan Requests <span className="badge">{unapprovedArtisans.length}</span>
-      </button>
-    </div>
-
-
+      <div className="flex gap-4 mb-6">
+        <button
+          className={`px-4 py-2 rounded font-medium ${
+            activeTab === 'products'
+              ? 'bg-orange-600 text-white'
+              : 'bg-white border border-orange-300 text-orange-600'
+          }`}
+          onClick={() => setActiveTab('products')}
+        >
+          📦 Product Requests <span className="ml-1 bg-white text-orange-600 font-bold px-2 py-0.5 rounded-full">{products.length}</span>
+        </button>
+        <button
+          className={`px-4 py-2 rounded font-medium ${
+            activeTab === 'artisans'
+              ? 'bg-orange-600 text-white'
+              : 'bg-white border border-orange-300 text-orange-600'
+          }`}
+          onClick={() => setActiveTab('artisans')}
+        >
+          👥 Artisan Requests <span className="ml-1 bg-white text-orange-600 font-bold px-2 py-0.5 rounded-full">{unapprovedArtisans.length}</span>
+        </button>
+      </div>
 
       {/* Product Section */}
       {activeTab === 'products' && (
         <div>
-          <h3>📦 Pending Product Approvals</h3>
+          <h3 className="text-xl font-semibold mb-4">📦 Pending Product Approvals</h3>
           {products.length === 0 ? (
-            <p className="no-products">No pending products 🚫</p>
+            <p className="text-gray-500">No pending products 🚫</p>
           ) : (
-            <div className="admin-grid">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
               {products.map(p => (
-                <div className="admin-card" key={p._id}>
-                  <img src={p.image} alt={p.title} />
-                  <div className="card-info">
-                    <h4>{p.title}</h4>
-                    <p>Category: {p.category}</p>
-                    <p>Price: ₹{p.price}</p>
-                    <p>Artisan: {p.artisanId?.name || 'Unknown'}</p>
-
-                    <button onClick={() => handleApproveProduct(p._id)}>Approve ✅</button>
-                    <button onClick={() => handleRejectProduct(p._id)} className="reject-btn">Reject ❌</button>
+                <div key={p._id} className="bg-white shadow rounded p-4">
+                  <img src={p.image} alt={p.title} className="w-full h-48 object-cover rounded mb-3" />
+                  <h4 className="font-semibold">{p.title}</h4>
+                  <p className="text-sm text-gray-600">Category: {p.category}</p>
+                  <p className="text-sm text-gray-600">Price: ₹{p.price}</p>
+                  <p className="text-sm text-gray-600 mb-2">Artisan: {p.artisanId?.name || 'Unknown'}</p>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleApproveProduct(p._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                    >
+                      Approve ✅
+                    </button>
+                    <button
+                      onClick={() => handleRejectProduct(p._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Reject ❌
+                    </button>
                   </div>
                 </div>
               ))}
@@ -139,20 +142,34 @@ const AdminDashboard = () => {
 
       {/* Artisan Section */}
       {activeTab === 'artisans' && (
-        <div className="artisan-approval">
-          <h3>👥 Pending Artisan Approvals</h3>
+        <div>
+          <h3 className="text-xl font-semibold mb-4">👥 Pending Artisan Approvals</h3>
           {unapprovedArtisans.length === 0 ? (
-            <p className="no-artisans">No pending artisans 🚫</p>
+            <p className="text-gray-500">No pending artisans 🚫</p>
           ) : (
-            <ul className="artisan-list">
+            <ul className="space-y-4">
               {unapprovedArtisans.map(user => (
-                <li key={user._id} className="artisan-card">
+                <li
+                  key={user._id}
+                  className="bg-white shadow rounded flex justify-between items-center p-4"
+                >
                   <div>
-                    <strong>{user.name}</strong> — {user.email}
+                    <p className="font-semibold">{user.name}</p>
+                    <p className="text-sm text-gray-600">{user.email}</p>
                   </div>
-                  <div className="artisan-actions">
-                    <button onClick={() => handleApproveArtisan(user._id)}>Approve ✅</button>
-                    <button onClick={() => handleRejectArtisan(user._id)} className="reject-btn">Reject ❌</button>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleApproveArtisan(user._id)}
+                      className="bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded"
+                    >
+                      Approve ✅
+                    </button>
+                    <button
+                      onClick={() => handleRejectArtisan(user._id)}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                    >
+                      Reject ❌
+                    </button>
                   </div>
                 </li>
               ))}
