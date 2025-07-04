@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/MyOrdersPage.css';
-import { toast } from 'react-toastify';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../index.css';
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('All');
@@ -17,7 +17,7 @@ const MyOrdersPage = () => {
       const res = await axios.get(`http://localhost:5000/api/orders/user/${user._id}`);
       setOrders(res.data);
     } catch (err) {
-      console.error("Failed to fetch orders:", err);
+      toast.error('Failed to fetch orders');
     }
   };
 
@@ -27,7 +27,6 @@ const MyOrdersPage = () => {
       toast.success('Order cancelled successfully');
       fetchOrders();
     } catch (err) {
-      console.error("Cancel failed:", err);
       toast.error('Failed to cancel order');
     }
   };
@@ -54,52 +53,85 @@ const MyOrdersPage = () => {
   const totalPages = Math.ceil(sortedOrders.length / itemsPerPage);
 
   return (
-    <div className="orders-page">
-      <h2>My Orders 🧾</h2>
+    <div className="max-w-5xl mx-auto p-6">
+      <h2 className="text-2xl font-semibold mb-6 text-gray-800">🧾 My Orders</h2>
 
-      <div className="orders-header">
-      <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-        <option value="All">All</option>
-        <option value="Pending">Pending</option>
-        <option value="Paid">Paid</option>
-        <option value="Cancelled">Cancelled</option>
-      </select>
+      {/* Filters */}
+      <div className="flex flex-col sm:flex-row gap-4 mb-6">
+        <select
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="All">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Paid">Paid</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
 
-     <select value={sortBy} onChange={e => setSortBy(e.target.value)}>
-      <option value="latest">Latest First</option>
-      <option value="total">Sort by Total</option>
-    </select>
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value)}
+          className="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value="latest">Latest First</option>
+          <option value="total">Sort by Total</option>
+        </select>
       </div>
-      
+
       {paginatedOrders.length === 0 ? (
-        <p>No orders yet.</p>
+        <p className="text-gray-600">No orders yet.</p>
       ) : (
-        paginatedOrders.map(order => (
-          <div key={order._id} className="order-card">
-            <div className="order-header">
+        paginatedOrders.map((order) => (
+          <div
+            key={order._id}
+            className="bg-white rounded-lg shadow-md p-6 mb-6 border border-gray-200"
+          >
+            <div className="flex justify-between mb-2 text-sm text-gray-600">
               <span><strong>Order ID:</strong> {order._id}</span>
               <span><strong>Date:</strong> {new Date(order.placedAt).toLocaleDateString()}</span>
             </div>
-            <p><strong>Total:</strong> ₹{order.total}</p>
-            <p><strong>Payment:</strong> {order.paymentStatus}</p>
-            <p><strong>Status:</strong> 
-              <span className={`status-badge status-${order.status.toLowerCase()}`}>
+
+            <p className="text-gray-800"><strong>Total:</strong> ₹{order.total}</p>
+            <p className="text-gray-800"><strong>Payment:</strong> {order.paymentStatus}</p>
+
+            <p className="mt-2">
+              <strong>Status: </strong>
+              <span className={`inline-block px-3 py-1 text-sm rounded-full font-medium 
+                ${
+                  order.status === 'Pending'
+                    ? 'bg-yellow-100 text-yellow-800'
+                    : order.status === 'Paid'
+                    ? 'bg-green-100 text-green-800'
+                    : order.status === 'Cancelled'
+                    ? 'bg-red-100 text-red-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}
+              >
                 {order.status}
               </span>
             </p>
 
-
-            <ul>
+            <ul className="mt-4 space-y-2">
               {order.items.map((item, idx) => (
-                <div key={idx} className="order-item">
-                  <img src={item.productId?.image} alt="Product" />
-                  <span>{item.productId?.title || 'Unnamed Product'} × {item.quantity}</span>
-                </div>
+                <li key={idx} className="flex items-center gap-4">
+                  <img
+                    src={item.productId?.image}
+                    alt="Product"
+                    className="w-16 h-16 object-cover rounded"
+                  />
+                  <span className="text-gray-700">
+                    {item.productId?.title || 'Unnamed Product'} × {item.quantity}
+                  </span>
+                </li>
               ))}
             </ul>
 
             {order.status === 'Pending' && (
-              <button className="cancel-btn" onClick={() => handleCancel(order._id)}>
+              <button
+                onClick={() => handleCancel(order._id)}
+                className="mt-4 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition"
+              >
                 Cancel Order
               </button>
             )}
@@ -107,19 +139,26 @@ const MyOrdersPage = () => {
         ))
       )}
 
+      {/* Pagination */}
       {totalPages > 1 && (
-        <div className="pagination">
+        <div className="flex justify-center mt-6 space-x-2">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i}
               onClick={() => setCurrentPage(i + 1)}
-              className={currentPage === i + 1 ? 'active' : ''}
+              className={`px-3 py-1 rounded ${
+                currentPage === i + 1
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+              }`}
             >
               {i + 1}
             </button>
           ))}
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

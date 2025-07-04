@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import '../index.css';
 const EmailOtpForm = ({ onVerified }) => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [timer, setTimer] = useState(0);
 
-  // Timer logic
+  // Countdown logic
   useEffect(() => {
     let interval;
     if (timer > 0) {
@@ -23,7 +23,7 @@ const EmailOtpForm = ({ onVerified }) => {
       await axios.post('http://localhost:5000/api/otp/send-email-otp', { email });
       toast.success('OTP sent to your email');
       setShowOtpInput(true);
-      setTimer(60); // 60 seconds cooldown
+      setTimer(60);
     } catch (err) {
       toast.error('Failed to send OTP');
     }
@@ -34,7 +34,7 @@ const EmailOtpForm = ({ onVerified }) => {
       const res = await axios.post('http://localhost:5000/api/otp/verify-email-otp', { email, otp });
       if (res.data.verified) {
         toast.success('Email verified ✅');
-        onVerified(email); // pass email to parent (e.g. Register)
+        onVerified(email);
       } else {
         toast.error('Incorrect OTP');
       }
@@ -44,15 +44,16 @@ const EmailOtpForm = ({ onVerified }) => {
   };
 
   return (
-    <div className="otp-form" style={{ maxWidth: '400px', margin: 'auto', padding: '1rem' }}>
-      <h2>Email Verification</h2>
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
+      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Email Verification</h2>
+
       <input
         type="email"
         placeholder="Enter your email"
         value={email}
         disabled={showOtpInput}
         onChange={(e) => setEmail(e.target.value)}
-        style={{ padding: '0.5rem', width: '100%', marginBottom: '1rem' }}
+        className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
       />
 
       {showOtpInput && (
@@ -62,21 +63,27 @@ const EmailOtpForm = ({ onVerified }) => {
             placeholder="Enter OTP"
             value={otp}
             onChange={(e) => setOtp(e.target.value)}
-            style={{ padding: '0.5rem', width: '100%', marginBottom: '1rem' }}
+            className="w-full px-4 py-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
 
-          <button onClick={handleVerifyOtp} style={{ padding: '0.5rem 1rem' }}>
+          <button
+            onClick={handleVerifyOtp}
+            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition"
+          >
             Verify OTP
           </button>
         </>
       )}
 
       {!showOtpInput || timer === 0 ? (
-        <button onClick={handleSendOtp} style={{ marginTop: '1rem' }}>
+        <button
+          onClick={handleSendOtp}
+          className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded transition"
+        >
           {showOtpInput ? 'Resend OTP' : 'Send OTP'}
         </button>
       ) : (
-        <p style={{ marginTop: '1rem' }}>⏳ Resend available in {timer}s</p>
+        <p className="mt-4 text-center text-gray-500">⏳ Resend available in {timer}s</p>
       )}
 
       <ToastContainer position="top-center" />

@@ -1,24 +1,34 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import '../styles/NavBar.css'; // Ensure you have this CSS file for styling
 
 const NavBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const showBackButton = location.pathname !== '/' && location.pathname !== '/home';
-    
+
   return (
-    <div className="navbar">
-      {showBackButton && (
-        <button className="back-button" onClick={() => navigate(-1)}>
+    <nav className="sticky top-0 z-50 bg-white shadow-md px-4 py-3 flex items-center justify-between">
+      {/* Back Button */}
+      {showBackButton ? (
+        <button
+          onClick={() => navigate(-1)}
+          className="text-indigo-600 hover:text-indigo-800 font-medium flex items-center gap-1"
+        >
           ← Back
         </button>
+      ) : (
+        <div />
       )}
-      <button className="home-button" onClick={() => navigate('/')}>
+
+      {/* Home Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="text-green-600 hover:text-green-800 font-medium flex items-center gap-1"
+      >
         🏠 Home
       </button>
-    </div>
+    </nav>
   );
 };
 

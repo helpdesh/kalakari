@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
-import '../styles/CartPage.css';
-import { toast } from 'react-toastify';
-
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import '../index.css';
 const CartPage = () => {
   const { cartItems, setCartItems, removeFromCart } = useCart();
   const [showDeliveryForm, setShowDeliveryForm] = useState(false);
@@ -31,7 +31,7 @@ const CartPage = () => {
     setCartItems(updated);
     localStorage.setItem('cart', JSON.stringify(updated));
   };
-  
+
   const decreaseQuantity = (id) => {
     const updated = cartItems.map(item =>
       item._id === id && item.quantity > 1 ? { ...item, quantity: item.quantity - 1 } : item
@@ -48,7 +48,7 @@ const CartPage = () => {
         items: cartItems.map(item => ({
           productId: item._id,
           quantity: item.quantity,
-          artisan: item.artisan, // ✅ INCLUDE artisan
+          artisan: item.artisan,
         })),
         total: totalPrice,
         address: deliveryDetails.address,
@@ -66,15 +66,14 @@ const CartPage = () => {
   };
 
   const handleRemove = (id) => {
-  removeFromCart(id);
-  toast.success('Item removed from cart');
-};
+    removeFromCart(id);
+    toast.success('Item removed from cart');
+  };
 
-const handlePlaceOrder = () => {
-  setShowDeliveryForm(true);
-  toast.info('Enter your delivery details');
-};
-
+  const handlePlaceOrder = () => {
+    setShowDeliveryForm(true);
+    toast.info('Enter your delivery details');
+  };
 
   const handlePayment = async () => {
     try {
@@ -118,7 +117,7 @@ const handlePlaceOrder = () => {
     }
   };
 
-  const handleFinalSubmit = async () => {
+  const handleFinalSubmit = () => {
     const { name, mobile, address, paymentMode, pincode, state, city } = deliveryDetails;
 
     if (!name || !mobile || !address || !pincode || !state || !city) {
@@ -131,92 +130,122 @@ const handlePlaceOrder = () => {
       return;
     }
 
-    const orderPayload = {
-      userId: user._id,
-      items: cartItems.map(item => ({
-        productId: item._id,
-        quantity: item.quantity,
-        artisan: item.artisan, // ✅ INCLUDE artisan
-      })),
-      total: totalPrice,
-      address,
-      paymentStatus: paymentMode === 'cod' ? 'Pending' : 'Paid',
-    };
-
     if (paymentMode === 'cod') {
-      try {
-        await axios.post('http://localhost:5000/api/orders', orderPayload);
-        toast.success('Order placed successfully (Cash on Delivery)');
-        setCartItems([]);
-        localStorage.removeItem('cart');
-        setShowDeliveryForm(false);
-      } catch (err) {
-        toast.error('Failed to place order');
-      }
+      saveOrder('Pending');
     } else {
       handlePayment();
     }
   };
 
   return (
-    <div className="cart-page">
-      <h2>Your Cart 🛒</h2>
+    <div className="max-w-6xl mx-auto p-6">
+      <h2 className="text-2xl font-bold mb-4">🛒 Your Cart</h2>
 
       {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
+        <p className="text-gray-600">Your cart is empty.</p>
       ) : (
-        <div className="cart-layout">
-          <div className="cart-items-section">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left - Cart or Delivery Form */}
+          <div className="flex-1">
             {!showDeliveryForm ? (
-              <ul className="cart-list">
+              <ul className="space-y-6">
                 {cartItems.map((item, index) => (
-                  <li className="cart-item" key={index}>
-                    <img src={item.image} alt={item.title} />
-                    <div className="cart-item-details">
-                      <h4>{item.title}</h4>
-                      <p>Price: ₹{item.price}</p>
-                      <div className="quantity-controls">
-                        <button onClick={() => decreaseQuantity(item._id)}>-</button>
+                  <li key={index} className="flex gap-4 border p-4 rounded shadow-sm">
+                    <img src={item.image} alt={item.title} className="w-24 h-24 object-cover rounded" />
+                    <div className="flex-1">
+                      <h4 className="text-lg font-semibold">{item.title}</h4>
+                      <p className="text-sm text-gray-600">Price: ₹{item.price}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <button
+                          onClick={() => decreaseQuantity(item._id)}
+                          className="bg-gray-200 px-2 py-1 rounded"
+                        >
+                          -
+                        </button>
                         <span>{item.quantity}</span>
-                        <button onClick={() => increaseQuantity(item._id)}>+</button>
+                        <button
+                          onClick={() => increaseQuantity(item._id)}
+                          className="bg-gray-200 px-2 py-1 rounded"
+                        >
+                          +
+                        </button>
                       </div>
-                      <button className="remove-btn" onClick={() => handleRemove(item._id)}>Remove</button>
+                      <button
+                        className="mt-2 text-red-600 hover:underline"
+                        onClick={() => handleRemove(item._id)}
+                      >
+                        Remove
+                      </button>
                     </div>
                   </li>
                 ))}
               </ul>
             ) : (
-              <div className="delivery-form">
-                <h3>Delivery Address 🏠</h3>
-                <input type="text" placeholder="Full Name" value={deliveryDetails.name} onChange={e => setDeliveryDetails({ ...deliveryDetails, name: e.target.value })} />
-                <input type="tel" placeholder="Mobile Number" value={deliveryDetails.mobile} onChange={e => setDeliveryDetails({ ...deliveryDetails, mobile: e.target.value })} />
-                <input type="text" placeholder="Pincode" value={deliveryDetails.pincode} onChange={e => setDeliveryDetails({ ...deliveryDetails, pincode: e.target.value })} />
-                <input type="text" placeholder="State" value={deliveryDetails.state} onChange={e => setDeliveryDetails({ ...deliveryDetails, state: e.target.value })} />
-                <input type="text" placeholder="City" value={deliveryDetails.city} onChange={e => setDeliveryDetails({ ...deliveryDetails, city: e.target.value })} />
-                <textarea placeholder="Flat / Area / Landmark" rows="3" value={deliveryDetails.address} onChange={e => setDeliveryDetails({ ...deliveryDetails, address: e.target.value })}></textarea>
-                <select value={deliveryDetails.paymentMode} onChange={e => setDeliveryDetails({ ...deliveryDetails, paymentMode: e.target.value })}>
+              <div className="space-y-4">
+                <h3 className="text-xl font-semibold">🏠 Delivery Address</h3>
+                {[
+                  { name: 'name', placeholder: 'Full Name' },
+                  { name: 'mobile', placeholder: 'Mobile Number', type: 'tel' },
+                  { name: 'pincode', placeholder: 'Pincode' },
+                  { name: 'state', placeholder: 'State' },
+                  { name: 'city', placeholder: 'City' },
+                ].map(({ name, placeholder, type = 'text' }) => (
+                  <input
+                    key={name}
+                    type={type}
+                    placeholder={placeholder}
+                    value={deliveryDetails[name]}
+                    onChange={(e) => setDeliveryDetails({ ...deliveryDetails, [name]: e.target.value })}
+                    className="w-full border p-2 rounded"
+                  />
+                ))}
+                <textarea
+                  placeholder="Flat / Area / Landmark"
+                  rows="3"
+                  value={deliveryDetails.address}
+                  onChange={(e) => setDeliveryDetails({ ...deliveryDetails, address: e.target.value })}
+                  className="w-full border p-2 rounded"
+                ></textarea>
+
+                <select
+                  value={deliveryDetails.paymentMode}
+                  onChange={(e) => setDeliveryDetails({ ...deliveryDetails, paymentMode: e.target.value })}
+                  className="w-full border p-2 rounded"
+                >
                   <option value="">Select Payment Mode</option>
                   <option value="cod">Cash on Delivery</option>
                   <option value="upi">Razorpay</option>
                 </select>
-                <button className="confirm-btn" onClick={handleFinalSubmit}>Confirm Order</button>
+
+                <button
+                  onClick={handleFinalSubmit}
+                  className="w-full bg-orange-500 text-white py-2 rounded hover:bg-orange-600 transition"
+                >
+                  Confirm Order
+                </button>
               </div>
             )}
           </div>
 
-          <div className="checkout-summary">
-            <h3>Order Summary</h3>
+          {/* Right - Summary */}
+          <div className="w-full lg:w-1/3 bg-gray-50 p-4 rounded shadow-md">
+            <h3 className="text-xl font-semibold mb-4">🧾 Order Summary</h3>
             <p>Total Items: {totalItems}</p>
             <p>Total Price: ₹{totalPrice}</p>
 
             {!showDeliveryForm && (
-              <button className="checkout-btn" onClick={handlePlaceOrder}>
+              <button
+                className="mt-4 w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
+                onClick={handlePlaceOrder}
+              >
                 Place Order
               </button>
             )}
           </div>
         </div>
       )}
+
+      <ToastContainer position="top-right" autoClose={2000} />
     </div>
   );
 };

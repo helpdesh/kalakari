@@ -1,82 +1,78 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
-import '../styles/LoginPage.css';
+import axios from 'axios';
 import { toast } from 'react-toastify';
-
-
+import '../index.css';
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
 
-  const handleLogin = async e => {
-  e.preventDefault();
-  try {
-    const res = await axios.post('http://localhost:5000/api/auth/login', {
-      email,
-      password
-    });
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-    localStorage.setItem('token', res.data.token);
-    localStorage.setItem('user', JSON.stringify({ ...res.data.user, _id: res.data.user._id || res.data.user.id }));
+    if (!email || !password) {
+      toast.error('Please enter both email and password');
+      return;
+    }
 
+    try {
+      const res = await axios.post('http://localhost:5000/api/auth/login', {
+        email,
+        password,
+      });
 
-    toast.success('Login successful!');
-
-    // Delay navigation to show toast
-    setTimeout(() => {
-      const role = res.data.user.role;
-      if (role === 'admin') navigate('/admin/dashboard');
-      else if (role === 'artisan') navigate('/artisan/dashboard');
-      else navigate('/');
-    }, 1000);
-  } catch (err) {
-    toast.error('Login failed. Please check your credentials.');
-  }
-}
-
+      localStorage.setItem('user', JSON.stringify(res.data.user));
+      localStorage.setItem('token', res.data.token);
+      toast.success('Logged in successfully!');
+      navigate('/');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Login failed');
+    }
+  };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2>Welcome Back 👋</h2>
-        <p>Please login to continue</p>
-         <form onSubmit={handleLogin} style={{ width: '100%' }}>
-          <input
-            type="email"
-            placeholder="Email Address"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            required
-          />
-
-          <div className="password-wrapper">
-            {/* password input with toggle */}
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-100 to-yellow-200 px-4">
+      <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
+        <h2 className="text-2xl font-bold text-center text-orange-600 mb-6">Welcome Back 👋</h2>
+        <form onSubmit={handleLogin} className="space-y-5">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
             <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              required
-              className="password-input"
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              placeholder="you@example.com"
             />
-
-            <span
-              className="toggle-icon"
-              onClick={() => setShowPassword(prev => !prev)}
-              role="button"
-            >
-              {showPassword ? '🙈' : '👁️'}
-            </span>
           </div>
-          
-          <button type="submit">Login</button>
+
+          <div>
+            <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="mt-1 w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded-lg transition-all duration-200"
+          >
+            Login
+          </button>
         </form>
 
-        <p className="register-link">
-          New user? <Link to="/register">Register here</Link>
+        <p className="mt-4 text-center text-sm text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-orange-500 hover:underline font-medium">
+            Register here
+          </Link>
         </p>
       </div>
     </div>

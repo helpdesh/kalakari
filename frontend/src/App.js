@@ -11,49 +11,59 @@ import ProtectedRoute from './components/ProtectedRoute';
 import CategoryPage from './pages/CategoryPage';
 import MyOrdersPage from './pages/MyOrdersPage';
 import NavBar from './components/NavBar';
-import { ToastContainer } from 'react-toastify'; // ✅ IMPORT
-import 'react-toastify/dist/ReactToastify.css'; // ✅ STYLE
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   return (
     <Router>
-      <NavBar />
-      <ToastContainer position="top-right" autoClose={3000} /> {/* ✅ ADD TOAST CONTAINER */}
+      <ToastContainer position="top-right" autoClose={3000} />
       <Routes>
-        {/* Public routes */}
+        {/* HomePage — No NavBar */}
         <Route path="/" element={<HomePage />} />
-        <Route path="/product/:id" element={<ProductDetailsPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/category/:categoryName" element={<CategoryPage />} />
-        <Route path="/orders" element={<MyOrdersPage />} />
+
+        {/* Routes with NavBar */}
+        <Route path="/product/:id" element={<><NavBar /><ProductDetailsPage /></>} />
+        <Route path="/login" element={<><NavBar /><LoginPage /></>} />
+        <Route path="/register" element={<><NavBar /><RegisterPage /></>} />
+        <Route path="/category/:categoryName" element={<><NavBar /><CategoryPage /></>} />
+        <Route path="/orders" element={<><NavBar /><MyOrdersPage /></>} />
 
         {/* Protected route: Customer/Artisan/Admin can access cart */}
         <Route
           path="/cart"
           element={
             <ProtectedRoute allowedRoles={['customer', 'artisan', 'admin']}>
-              <CartPage />
+              <>
+                <NavBar />
+                <CartPage />
+              </>
             </ProtectedRoute>
           }
         />
 
-        {/* Protected route: Admin only */}
+        {/* Admin only */}
         <Route
           path="/admin/dashboard"
           element={
             <ProtectedRoute allowedRoles={['admin']}>
-              <AdminDashboard />
+              <>
+                <NavBar />
+                <AdminDashboard />
+              </>
             </ProtectedRoute>
           }
         />
 
-        {/* Protected route: Artisan only */}
+        {/* Artisan only */}
         <Route
           path="/artisan/dashboard"
           element={
             <ProtectedRoute allowedRoles={['artisan']}>
-              <ArtisanDashboard />
+              <>
+                <NavBar />
+                <ArtisanDashboard />
+              </>
             </ProtectedRoute>
           }
         />
