@@ -67,6 +67,13 @@ const LoginPage = () => {
             </span>
           </div>
 
+          <div className="flex justify-between text-sm">
+            <Link to="/forgot-password" className="text-orange-600 hover:underline">
+              Forgot Password?
+            </Link>
+            </div>
+            
+
           <button
             type="submit"
             className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-semibold transition"

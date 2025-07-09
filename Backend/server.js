@@ -9,6 +9,7 @@ const adminRoutes = require('./routes/adminRoutes');
 const emailOtpRoutes = require('./routes/emailOtpRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
+const emailRoutes = require('./routes/emailRoutes');
 
 
 
@@ -18,6 +19,7 @@ app.use(cors());
 app.use(express.json());
 
 
+
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
@@ -25,6 +27,8 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/otp', emailOtpRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/email', emailRoutes);
+
 
 // MongoDB connection
 mongoose.connect(process.env.MONGO_URI, {

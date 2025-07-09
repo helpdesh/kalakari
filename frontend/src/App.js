@@ -10,6 +10,11 @@ import RegisterPage from './pages/RegisterPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import CategoryPage from './pages/CategoryPage';
 import MyOrdersPage from './pages/MyOrdersPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
+import UpdatePasswordPage from './pages/UpdatePasswordPage';
+import ResetPasswordPage from './pages/ResetPasswordPage';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
+import TermsConditionsPage from './pages/TermsConditionsPage';
 import NavBar from './components/NavBar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -28,7 +33,11 @@ function App() {
         <Route path="/register" element={<><NavBar /><RegisterPage /></>} />
         <Route path="/category/:categoryName" element={<><NavBar /><CategoryPage /></>} />
         <Route path="/orders" element={<><NavBar /><MyOrdersPage /></>} />
-
+        <Route path="/forgot-password" element={<><NavBar /><ForgotPasswordPage /></>} />
+        <Route path="/update-password" element={<><NavBar /><UpdatePasswordPage /></>} />
+        <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
+        <Route path="/privacy" element={<PrivacyPolicyPage />} />
+        <Route path="/terms" element={<TermsConditionsPage />} />
         {/* Protected route: Customer/Artisan/Admin can access cart */}
         <Route
           path="/cart"

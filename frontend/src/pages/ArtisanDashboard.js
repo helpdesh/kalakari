@@ -115,16 +115,76 @@ const ArtisanDashboard = () => {
       <h2 className="text-3xl font-bold text-center mb-6">👨‍🎨 Artisan Dashboard</h2>
 
       {/* Product Form */}
-      <form onSubmit={handleSubmit} className="bg-white shadow-md rounded-lg p-6 mb-10 space-y-4">
-        <h3 className="text-xl font-semibold mb-4">{form._id ? '✏️ Edit Product' : '➕ Add New Product'}</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <input name="title" placeholder="Product Title" value={form.title} onChange={handleChange} required className="input input-bordered w-full" />
-          <input name="price" type="number" placeholder="Price" value={form.price} onChange={handleChange} required className="input input-bordered w-full" />
-          <input name="category" placeholder="Category" value={form.category} onChange={handleChange} className="input input-bordered w-full" />
-          <input name="image" placeholder="Image URL" value={form.image} onChange={handleChange} className="input input-bordered w-full" />
+      <form onSubmit={handleSubmit} className="bg-gradient-to-br from-orange-50 to-blue-50 shadow-lg rounded-xl p-8 mb-10 space-y-6 border border-orange-100">
+        <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+          {form._id ? '✏️ Edit Product' : '➕ Add New Product'}
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block mb-1 font-medium text-gray-700" htmlFor="title">📝 Product Title</label>
+            <input
+              id="title"
+              name="title"
+              placeholder="e.g. Handcrafted Vase"
+              value={form.title}
+              onChange={handleChange}
+              required
+              className="input input-bordered w-full focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium text-gray-700" htmlFor="price">💰 Price (₹)</label>
+            <input
+              id="price"
+              name="price"
+              type="number"
+              placeholder="e.g. 499"
+              value={form.price}
+              onChange={handleChange}
+              required
+              className="input input-bordered w-full focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium text-gray-700" htmlFor="category">🏷️ Category</label>
+            <input
+              id="category"
+              name="category"
+              placeholder="e.g. Home Decor"
+              value={form.category}
+              onChange={handleChange}
+              className="input input-bordered w-full focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
+          <div>
+            <label className="block mb-1 font-medium text-gray-700" htmlFor="image">🖼️ Image URL</label>
+            <input
+              id="image"
+              name="image"
+              placeholder="Paste image URL"
+              value={form.image}
+              onChange={handleChange}
+              className="input input-bordered w-full focus:ring-2 focus:ring-orange-400"
+            />
+          </div>
         </div>
-        <textarea name="description" placeholder="Description" value={form.description} onChange={handleChange} required className="textarea textarea-bordered w-full mt-2" />
-        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded">
+        <div>
+          <label className="block mb-1 font-medium text-gray-700" htmlFor="description">📝 Description</label>
+          <textarea
+            id="description"
+            name="description"
+            placeholder="Describe your product..."
+            value={form.description}
+            onChange={handleChange}
+            required
+            className="textarea textarea-bordered w-full mt-2 focus:ring-2 focus:ring-orange-400"
+            rows={3}
+          />
+        </div>
+        <button
+          type="submit"
+          className="bg-gradient-to-r from-orange-500 to-blue-500 hover:from-orange-600 hover:to-blue-600 text-white px-8 py-2 rounded-lg font-semibold shadow transition"
+        >
           {form._id ? 'Update Product' : 'Add Product'}
         </button>
       </form>

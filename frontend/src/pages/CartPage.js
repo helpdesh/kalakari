@@ -42,28 +42,36 @@ const CartPage = () => {
   };
 
   const saveOrder = async (paymentStatus) => {
-    try {
-      await axios.post('http://localhost:5000/api/orders', {
-        userId: user._id,
-        items: cartItems.map(item => ({
-          productId: item._id,
-          quantity: item.quantity,
-          artisan: item.artisan,
-        })),
-        total: totalPrice,
-        address: deliveryDetails.address,
-        paymentStatus,
-      });
+  try {
+    const orderData = {
+      userId: user._id,
+      items: cartItems.map(item => ({
+        productId: item._id,
+        quantity: item.quantity,
+        artisan: item.artisan,
+      })),
+      total: totalPrice,
+      address: deliveryDetails.address,
+      paymentStatus,
+      customerEmail: user.email,
+      customerName: user.name
+    };
 
-      toast.success(`Order placed successfully (${paymentStatus})`);
-      setCartItems([]);
-      localStorage.removeItem('cart');
-      setShowDeliveryForm(false);
-    } catch (err) {
-      toast.error('Failed to save order');
-      console.error(err);
-    }
-  };
+    const response = await axios.post('http://localhost:5000/api/orders', orderData);
+    const savedOrder = response.data.order; // ✅ Extract saved order
+
+    toast.success(`Order placed successfully (${paymentStatus})`);
+    setCartItems([]);
+    localStorage.removeItem('cart');
+    setShowDeliveryForm(false);
+
+    return savedOrder; // ✅ Return saved order
+  } catch (err) {
+    toast.error('Failed to save order');
+    console.error(err);
+    throw err;
+  }
+};
 
   const handleRemove = (id) => {
     removeFromCart(id);
@@ -78,65 +86,93 @@ const CartPage = () => {
   const handlePayment = async () => {
   try {
     const res = await axios.post('http://localhost:5000/api/payment/order', {
-      amount: totalPrice, // not multiplied by 100 here
+      amount: totalPrice,
     });
 
-    const order = res.data; // ✅ this is correct now since backend sends full order
+    const order = res.data;
 
     const options = {
-      key: 'rzp_test_p5bmclWL1NpERt', // ✅ use your new Razorpay test key
-      amount: order.amount,            // in paise
+      key: 'rzp_test_p5bmclWL1NpERt',
+      amount: order.amount,
       currency: 'INR',
       name: 'Desi-Etsy',
       description: 'Order Payment',
-      order_id: order.id,              // ✅ Razorpay order_id
+      order_id: order.id,
       handler: async function (response) {
-        await saveOrder('Paid');
+  try {
+    const savedOrder = await saveOrder('Paid');
+
+    await axios.post('http://localhost:5000/api/email/order-confirmation', {
+      orderId: savedOrder._id, // ✅ Correct ID
+      customerEmail: user.email,
+      customerName: user.name,
+      items: cartItems,
+      totalAmount: totalPrice,
+      paymentMethod: 'Razorpay'
+    });
+  } catch (error) {
+    console.error('Email sending failed:', error);
+  }
+},
+      prefill: {  
+        name: deliveryDetails.name,
+        email: user.email,
+        contact: deliveryDetails.mobile,
       },
-      prefill: {
-        name: user?.name || '',
-        email: user?.email || '',
+      notes: {
+        address: deliveryDetails.address,
       },
-      theme: { color: '#cc5200' },
-      modal: {
-        ondismiss: function () {
-          toast.warning('Payment cancelled');
-        },
+      theme: {
+        color: '#cc5200',
       },
     };
 
     const rzp = new window.Razorpay(options);
-    rzp.on('payment.failed', function (response) {
-      toast.error("❌ Payment Failed: " + response.error.description);
-    });
-
     rzp.open();
   } catch (error) {
     toast.error('Payment initiation failed');
-    console.error('Payment Error:', error.response?.data || error.message);
+    console.error('Payment Error:', error);
   }
 };
 
 
-  const handleFinalSubmit = () => {
-    const { name, mobile, address, paymentMode, pincode, state, city } = deliveryDetails;
+  const handleFinalSubmit = async () => {
+  const { name, mobile, address, paymentMode, pincode, state, city } = deliveryDetails;
 
-    if (!name || !mobile || !address || !pincode || !state || !city) {
-      toast.error('Please fill in all delivery details');
-      return;
-    }
+  if (!name || !mobile || !address || !pincode || !state || !city) {
+    toast.error('Please fill in all delivery details');
+    return;
+  }
 
-    if (!user || !user._id) {
-      toast.error('You must be logged in to place an order');
-      return;
-    }
+  if (!user || !user._id) {
+    toast.error('You must be logged in to place an order');
+    return;
+  }
 
-    if (paymentMode === 'cod') {
-      saveOrder('Pending');
-    } else {
-      handlePayment();
+  if (paymentMode === 'cod') {
+    try {
+      const savedOrder = await saveOrder('Pending');
+      // Send COD confirmation email
+      await axios.post('http://localhost:5000/api/email/order-confirmation', {
+        orderId: savedOrder._id,
+        customerEmail: user.email,
+        customerName: user.name,
+        items: cartItems.map(item => ({
+          title: item.title,
+          quantity: item.quantity,
+          price: item.price,
+        })),
+        totalAmount: totalPrice,
+        paymentMethod: 'Cash on Delivery'
+      });
+    } catch (error) {
+      console.error('Email sending failed:', error);
+      toast.error('Order saved but email failed');
     }
-  };
+  } else {
+    handlePayment();
+  }
+};
 
   return (
     <div className="max-w-6xl mx-auto p-6">
