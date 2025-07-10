@@ -48,13 +48,14 @@ router.get('/user/:id', async (req, res) => {
 });
 
 // ✅ Cancel order (if still pending)
+// ✅ Cancel order (if not already cancelled or delivered)
 router.put('/:id/cancel', async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ message: 'Order not found' });
 
-    if (order.status !== 'Pending') {
-      return res.status(400).json({ message: 'Only pending orders can be cancelled' });
+    if (order.status === 'Cancelled' || order.status === 'Delivered') {
+      return res.status(400).json({ message: 'Order cannot be cancelled anymore' });
     }
 
     order.status = 'Cancelled';
@@ -66,6 +67,7 @@ router.put('/:id/cancel', async (req, res) => {
     res.status(500).json({ message: 'Failed to cancel order' });
   }
 });
+
 
 // ✅ Get orders for a specific artisan
 router.get('/artisan/:artisanId', async (req, res) => {

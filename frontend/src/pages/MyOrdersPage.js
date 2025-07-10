@@ -3,6 +3,7 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../index.css';
+
 const MyOrdersPage = () => {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState('All');
@@ -23,17 +24,18 @@ const MyOrdersPage = () => {
 
   const handleCancel = async (orderId) => {
     try {
-      await axios.put(`http://localhost:5000/api/orders/${orderId}/cancel`);
-      toast.success('Order cancelled successfully');
+      const res = await axios.put(`http://localhost:5000/api/orders/${orderId}/cancel`);
+      toast.success(res.data.message || 'Order cancelled successfully');
       fetchOrders();
     } catch (err) {
-      toast.error('Failed to cancel order');
+      const errorMsg = err.response?.data?.message || 'Failed to cancel order';
+      toast.error(errorMsg);
     }
   };
 
   useEffect(() => {
     if (user?._id) fetchOrders();
-  }, [user._id]);
+  }, [user?._id]);
 
   const filteredOrders = orders.filter(order =>
     statusFilter === 'All' ? true : order.status === statusFilter
@@ -89,7 +91,7 @@ const MyOrdersPage = () => {
           >
             <div className="flex justify-between mb-2 text-sm text-gray-600">
               <span><strong>Order ID:</strong> {order._id}</span>
-              <span><strong>Date:</strong> {new Date(order.placedAt).toLocaleDateString()}</span>
+              <span><strong>Date:</strong> {order.placedAt ? new Date(order.placedAt).toLocaleDateString() : 'N/A'}</span>
             </div>
 
             <p className="text-gray-800"><strong>Total:</strong> ₹{order.total}</p>
@@ -127,14 +129,17 @@ const MyOrdersPage = () => {
               ))}
             </ul>
 
-            {order.status === 'Pending' && (
-              <button
-                onClick={() => handleCancel(order._id)}
-                className="mt-4 bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded transition"
-              >
-                Cancel Order
-              </button>
-            )}
+            <button
+              onClick={() => handleCancel(order._id)}
+              disabled={order.status === 'Cancelled'}
+              className={`mt-4 py-2 px-4 rounded transition text-white ${
+                order.status === 'Cancelled'
+                  ? 'bg-gray-400 cursor-not-allowed'
+                  : 'bg-red-600 hover:bg-red-700'
+              }`}
+            >
+              Cancel Order
+            </button>
           </div>
         ))
       )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
 import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { toast } from 'react-toastify';
 import bannerImg from '../assets/Banner-img.jpg'; // ✅ import from src/assets
 
@@ -10,8 +10,6 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showAbout, setShowAbout] = useState(false);
-
 
   const dropdownRef = useRef();
   const navigate = useNavigate();
