@@ -121,7 +121,6 @@ const RegisterPage = () => {
             >
               <option value="customer">Customer</option>
               <option value="artisan">Artisan</option>
-              <option value="admin">Admin</option>
             </select>
 
             <button

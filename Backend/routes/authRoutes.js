@@ -106,15 +106,37 @@ router.post('/reset-password', async (req, res) => {
 
 router.post('/register', async (req, res) => {
   const { name, email, password, role } = req.body;
+
   try {
+    // ❌ Prevent self-registration as admin
+    if (role === 'admin') {
+      return res.status(403).json({ error: 'Unauthorized to register as admin' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email already exists' });
+    }
+
+    // Hash password and create user
     const hashedPassword = await bcrypt.hash(password, 10);
-    const newUser = new User({name,email, password: hashedPassword,role, isApproved: role === 'artisan' ? false : true});
+    const newUser = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role,
+      isApproved: role === 'artisan' ? false : true // Artisans need approval
+    });
+
     await newUser.save();
     res.status(201).json({ message: 'User registered successfully' });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
+
 
 
 router.post('/login', async (req, res) => {
