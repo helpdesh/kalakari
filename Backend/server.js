@@ -2,7 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const dotenv = require('dotenv');
+
+// Import route files
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/ProductRoutes');
 const adminRoutes = require('./routes/adminRoutes');
@@ -11,31 +12,51 @@ const orderRoutes = require('./routes/orderRoutes');
 const paymentRoutes = require('./routes/paymentRoutes');
 const emailRoutes = require('./routes/emailRoutes');
 
-
-
-dotenv.config();
 const app = express();
-app.use(cors());
+
+// ✅ Allowed frontend origins (Vercel domains)
+const allowedOrigins = [
+  "https://niche-e-commerce-platform-for-handm.vercel.app",
+  "https://niche-e-commerce-plat-git-0f8ab0-rohit-kumars-projects-ae1bddc0.vercel.app",
+  "https://niche-e-commerce-platform-for-handmade-products-d3dwkgeef.vercel.app"
+];
+
+// ✅ CORS setup
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true,
+}));
+
+// ✅ Middleware
 app.use(express.json());
 
+// ✅ Health check route
+app.get('/', (req, res) => {
+  res.send('✅ Backend is running!');
+});
 
-
-// Routes
+// ✅ API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/otp', emailOtpRoutes);
 app.use('/api/orders', orderRoutes);
-app.use('/api/payment', require('./routes/paymentRoutes'));
+app.use('/api/payment', paymentRoutes);
 app.use('/api/email', emailRoutes);
 
-
-// MongoDB connection
+// ✅ MongoDB Connection
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-}).then(() => console.log('MongoDB Connected'))
-  .catch(err => console.error(err));
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
+// ✅ Start Server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
