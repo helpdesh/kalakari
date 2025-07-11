@@ -1,9 +1,82 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import '../index.css'; // Ensure you have this CSS file for styling
+import '../index.css';
 
+// ArtisanProfile Component
+const ArtisanProfile = ({ user }) => {
+  const [openDropdown, setOpenDropdown] = useState(false);
+  const dropdownRef = useRef();
+
+  const toggleDropdown = () => setOpenDropdown(prev => !prev);
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    window.location.href = '/';
+  };
+
+  const handleUpdatePassword = () => {
+    window.location.href = '/update-password';
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setOpenDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  return (
+    <div className="flex justify-end mb-6">
+      <div className="relative inline-block text-left" ref={dropdownRef}>
+        <button
+          onClick={toggleDropdown}
+          className="inline-flex items-center justify-center w-full rounded-md bg-white border border-gray-300 shadow-sm px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100"
+        >
+          👤 {user?.name}
+          <svg
+            className="-mr-1 ml-2 h-4 w-4"
+            viewBox="0 0 20 20"
+            fill="currentColor"
+          >
+            <path
+              fillRule="evenodd"
+              d="M5.23 7.21a.75.75 0 011.06.02L10 11.586l3.71-4.356a.75.75 0 111.14.976l-4.25 5a.75.75 0 01-1.14 0l-4.25-5a.75.75 0 01.02-1.06z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
+
+        {openDropdown && (
+          <div className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5">
+            <div className="py-1">
+              <button
+                onClick={handleUpdatePassword}
+                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+              >
+                🔐 Update Password
+              </button>
+              <button
+                onClick={handleLogout}
+                className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100 w-full text-left"
+              >
+                🚪 Logout
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ArtisanDashboard Component
 const ArtisanDashboard = () => {
   const [products, setProducts] = useState([]);
   const [orders, setOrders] = useState([]);
@@ -16,27 +89,25 @@ const ArtisanDashboard = () => {
     _id: ''
   });
 
-
   const user = JSON.parse(localStorage.getItem('user'));
   const artisanId = user?._id;
 
   useEffect(() => {
     if (user?.role === 'artisan') {
+      const fetchProducts = async () => {
+        const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
+        setProducts(res.data);
+      };
+
+      const fetchOrders = async () => {
+        const res = await axios.get(`http://localhost:5000/api/orders/artisan/${artisanId}`);
+        setOrders(res.data);
+      };
+
       fetchProducts();
       fetchOrders();
     }
-  }, []);
-
-
-  const fetchProducts = async () => {
-    const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
-    setProducts(res.data);
-  };
-
-  const fetchOrders = async () => {
-    const res = await axios.get(`http://localhost:5000/api/orders/artisan/${artisanId}`);
-    setOrders(res.data);
-  };
+  }, [artisanId, user?.role]);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -62,7 +133,10 @@ const ArtisanDashboard = () => {
         toast.success('Product added successfully ✅');
       }
       setForm({ title: '', description: '', price: '', image: '', category: '', _id: '' });
-      fetchProducts();
+
+      // Refresh products
+      const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
+      setProducts(res.data);
     } catch (error) {
       if (error.response?.status === 403) {
         toast.error(error.response.data.message || 'You are not approved to add products');
@@ -76,7 +150,8 @@ const ArtisanDashboard = () => {
     try {
       await axios.delete(`http://localhost:5000/api/products/${id}`);
       toast.success('Product deleted successfully ❌');
-      fetchProducts();
+      const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
+      setProducts(res.data);
     } catch (error) {
       toast.error('Error deleting product');
     }
@@ -98,7 +173,8 @@ const ArtisanDashboard = () => {
     try {
       await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus });
       toast.success('Order status updated');
-      fetchOrders();
+      const res = await axios.get(`http://localhost:5000/api/orders/artisan/${artisanId}`);
+      setOrders(res.data);
     } catch (err) {
       toast.error('Failed to update status');
     }
@@ -112,7 +188,9 @@ const ArtisanDashboard = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
-      <h2 className="text-3xl font-bold text-center mb-6">👨‍🎨 Artisan Dashboard</h2>
+      <h2 className="text-3xl font-bold text-center mb-2">👨‍🎨 Artisan Dashboard</h2>
+
+      <ArtisanProfile user={user} />
 
       {/* Product Form */}
       <form onSubmit={handleSubmit} className="bg-gradient-to-br from-orange-50 to-blue-50 shadow-lg rounded-xl p-8 mb-10 space-y-6 border border-orange-100">
@@ -121,7 +199,7 @@ const ArtisanDashboard = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
-            <label className="block mb-1 font-medium text-gray-700" htmlFor="title">📝 Product Title</label>
+            <label htmlFor="title" className="block mb-1 font-medium text-gray-700">📝 Product Title</label>
             <input
               id="title"
               name="title"
@@ -133,7 +211,7 @@ const ArtisanDashboard = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium text-gray-700" htmlFor="price">💰 Price (₹)</label>
+            <label htmlFor="price" className="block mb-1 font-medium text-gray-700">💰 Price (₹)</label>
             <input
               id="price"
               name="price"
@@ -146,7 +224,7 @@ const ArtisanDashboard = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium text-gray-700" htmlFor="category">🏷️ Category</label>
+            <label htmlFor="category" className="block mb-1 font-medium text-gray-700">🏷️ Category</label>
             <input
               id="category"
               name="category"
@@ -157,7 +235,7 @@ const ArtisanDashboard = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 font-medium text-gray-700" htmlFor="image">🖼️ Image URL</label>
+            <label htmlFor="image" className="block mb-1 font-medium text-gray-700">🖼️ Image URL</label>
             <input
               id="image"
               name="image"
@@ -169,7 +247,7 @@ const ArtisanDashboard = () => {
           </div>
         </div>
         <div>
-          <label className="block mb-1 font-medium text-gray-700" htmlFor="description">📝 Description</label>
+          <label htmlFor="description" className="block mb-1 font-medium text-gray-700">📝 Description</label>
           <textarea
             id="description"
             name="description"
