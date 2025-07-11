@@ -41,11 +41,7 @@ const CategoryPage = () => {
               key={p._id}
               className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
-              <img
-                src={p.image}
-                alt={p.title}
-                className="w-full h-48 object-cover"
-              />
+              <img src={p.image} alt={p.title} className="w-full h-48 object-contain bg-white" />
               <div className="p-4 flex flex-col gap-2">
                 <h4 className="text-lg font-semibold text-gray-800 truncate">{p.title}</h4>
                 <p className="text-gray-700 font-medium">₹{p.price}</p>
