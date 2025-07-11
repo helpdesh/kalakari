@@ -14,24 +14,10 @@ const emailRoutes = require('./routes/emailRoutes');
 
 const app = express();
 
-// ✅ Allowed frontend origins (Vercel domains)
-const allowedOrigins = [
-  "https://niche-e-commerce-platform-for-handm.vercel.app",
-  "https://niche-e-commerce-plat-git-0f8ab0-rohit-kumars-projects-ae1bddc0.vercel.app",
-  "https://niche-e-commerce-platform-for-handmade-products-d3dwkgeef.vercel.app"
-];
 
 // ✅ CORS setup
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-}));
+app.use(cors({ origin: "*", credentials: true }));
+
 
 // ✅ Middleware
 app.use(express.json());
