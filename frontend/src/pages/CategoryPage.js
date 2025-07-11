@@ -9,7 +9,7 @@ const CategoryPage = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const res = await axios.get('http://localhost:5000/api/products');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
       const filtered =
         categoryName === 'all'
           ? res.data

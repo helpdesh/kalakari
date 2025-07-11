@@ -57,7 +57,7 @@ const CartPage = () => {
       customerName: user.name
     };
 
-    const response = await axios.post('http://localhost:5000/api/orders', orderData);
+    const response = await axios.post(`${process.env.REACT_APP_API_URL}/orders`, orderData);
     const savedOrder = response.data.order; // ✅ Extract saved order
 
     toast.success(`Order placed successfully (${paymentStatus})`);
@@ -85,7 +85,7 @@ const CartPage = () => {
 
   const handlePayment = async () => {
   try {
-    const res = await axios.post('http://localhost:5000/api/payment/order', {
+    const res = await axios.post(`${process.env.REACT_APP_API_URL}/payment/order`, { 
       amount: totalPrice,
     });
 
@@ -102,7 +102,7 @@ const CartPage = () => {
   try {
     const savedOrder = await saveOrder('Paid');
 
-    await axios.post('http://localhost:5000/api/email/order-confirmation', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/email/order-confirmation`, {
       orderId: savedOrder._id, // ✅ Correct ID
       customerEmail: user.email,
       customerName: user.name,
@@ -148,12 +148,17 @@ const CartPage = () => {
     toast.error('You must be logged in to place an order');
     return;
   }
+      if (!paymentMode) {
+      toast.error('Please select a payment mode');
+      return;
+    }
+
 
   if (paymentMode === 'cod') {
     try {
       const savedOrder = await saveOrder('Pending');
       // Send COD confirmation email
-      await axios.post('http://localhost:5000/api/email/order-confirmation', {
+      await axios.post(`${process.env.REACT_APP_API_URL}/email/order-confirmation`, {
         orderId: savedOrder._id,
         customerEmail: user.email,
         customerName: user.name,

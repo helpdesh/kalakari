@@ -15,7 +15,7 @@ const MyOrdersPage = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/orders/user/${user._id}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/orders/user/${user._id}`);
       setOrders(res.data);
     } catch (err) {
       toast.error('Failed to fetch orders');
@@ -24,7 +24,7 @@ const MyOrdersPage = () => {
 
   const handleCancel = async (orderId) => {
     try {
-      const res = await axios.put(`http://localhost:5000/api/orders/${orderId}/cancel`);
+      const res = await axios.put(`${process.env.REACT_APP_API_URL}/orders/${orderId}/cancel`);
       toast.success(res.data.message || 'Order cancelled successfully');
       fetchOrders();
     } catch (err) {

@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import '../index.css'; // Ensure you have this CSS file for styling
+import '../index.css';
+
 const RegisterPage = () => {
   const [form, setForm] = useState({
     name: '',
@@ -33,7 +34,7 @@ const RegisterPage = () => {
     }
 
     try {
-      await axios.post('http://localhost:5000/api/otp/send-email-otp', { email: form.email });
+      await axios.post(`${process.env.REACT_APP_API_URL}/otp/send-email-otp`, { email: form.email });
       toast.success('OTP sent to your email');
       setStep(2);
     } catch {
@@ -43,13 +44,13 @@ const RegisterPage = () => {
 
   const handleVerifyOtp = async () => {
     try {
-      const res = await axios.post('http://localhost:5000/api/otp/verify-email-otp', {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/otp/verify-email-otp`, {
         email: form.email,
         otp
       });
 
       if (res.data.verified) {
-        await axios.post('http://localhost:5000/api/auth/register', form);
+        await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, form);
         toast.success('Registration successful!');
         navigate('/login');
       } else {

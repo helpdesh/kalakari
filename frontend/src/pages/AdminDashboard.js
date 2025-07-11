@@ -43,7 +43,7 @@ const AdminDashboard = () => {
 
   const fetchUnapprovedProducts = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/products/unapproved');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/unapproved`);
       setProducts(res.data);
     } catch (err) {
       toast.error('Failed to fetch products');
@@ -52,7 +52,7 @@ const AdminDashboard = () => {
 
   const fetchUnapprovedArtisans = async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/unapproved-artisans');
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/admin/unapproved-artisans`);
       setUnapprovedArtisans(res.data);
     } catch (err) {
       toast.error('Failed to fetch artisans');
@@ -61,7 +61,7 @@ const AdminDashboard = () => {
 
   const handleApproveProduct = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/products/approve/${id}`, { isApproved: true });
+      await axios.patch(`${process.env.REACT_APP_API_URL}/products/approve/${id}`, { isApproved: true });
       toast.success('Product approved ✅');
       fetchUnapprovedProducts();
     } catch (err) {
@@ -72,7 +72,7 @@ const AdminDashboard = () => {
   const handleRejectProduct = async (id) => {
     if (window.confirm('Are you sure you want to reject this product?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/products/${id}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/products/${id}`);
         toast.error('Product rejected ❌');
         fetchUnapprovedProducts();
       } catch (err) {
@@ -83,7 +83,7 @@ const AdminDashboard = () => {
 
   const handleApproveArtisan = async (id) => {
     try {
-      await axios.patch(`http://localhost:5000/api/admin/approve-artisan/${id}`);
+      await axios.patch(`${process.env.REACT_APP_API_URL}/admin/approve-artisan/${id}`);
       toast.success('Artisan approved ✅');
       fetchUnapprovedArtisans();
     } catch (err) {
@@ -94,7 +94,7 @@ const AdminDashboard = () => {
   const handleRejectArtisan = async (id) => {
     if (window.confirm('Are you sure you want to reject this artisan?')) {
       try {
-        await axios.delete(`http://localhost:5000/api/admin/reject-artisan/${id}`);
+        await axios.delete(`${process.env.REACT_APP_API_URL}/admin/reject-artisan/${id}`);
         toast.error('Artisan rejected ❌');
         fetchUnapprovedArtisans();
       } catch (err) {

@@ -3,49 +3,70 @@ import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import '../index.css';
+
 const EmailOtpForm = ({ onVerified }) => {
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [showOtpInput, setShowOtpInput] = useState(false);
   const [timer, setTimer] = useState(0);
+  const [loading, setLoading] = useState(false);
 
-  // Countdown logic
+  // Countdown timer
   useEffect(() => {
     let interval;
     if (timer > 0) {
-      interval = setInterval(() => setTimer(t => t - 1), 1000);
+      interval = setInterval(() => setTimer((t) => t - 1), 1000);
     }
     return () => clearInterval(interval);
   }, [timer]);
 
+  // Email validation helper
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
   const handleSendOtp = async () => {
+    if (!isValidEmail(email)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
     try {
-      await axios.post('http://localhost:5000/api/otp/send-email-otp', { email });
+      await axios.post(`${process.env.REACT_APP_API_URL}/otp/send-email-otp`, { email });
       toast.success('OTP sent to your email');
       setShowOtpInput(true);
       setTimer(60);
     } catch (err) {
-      toast.error('Failed to send OTP');
+      toast.error(err.response?.data?.message || 'Failed to send OTP');
     }
   };
 
   const handleVerifyOtp = async () => {
+    if (!otp.trim()) {
+      toast.error('Please enter the OTP');
+      return;
+    }
+
+    setLoading(true);
     try {
-      const res = await axios.post('http://localhost:5000/api/otp/verify-email-otp', { email, otp });
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}/otp/verify-email-otp`, { email, otp });
       if (res.data.verified) {
         toast.success('Email verified ✅');
         onVerified(email);
       } else {
         toast.error('Incorrect OTP');
       }
-    } catch {
-      toast.error('Verification failed');
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Verification failed');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md mt-10">
-      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">Email Verification</h2>
+      <h2 className="text-2xl font-semibold text-center text-gray-800 mb-6">
+        Email Verification
+      </h2>
 
       <input
         type="email"
@@ -68,9 +89,10 @@ const EmailOtpForm = ({ onVerified }) => {
 
           <button
             onClick={handleVerifyOtp}
-            className="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition"
+            disabled={loading}
+            className={`w-full bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded transition ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            Verify OTP
+            {loading ? 'Verifying...' : 'Verify OTP'}
           </button>
         </>
       )}
@@ -86,7 +108,7 @@ const EmailOtpForm = ({ onVerified }) => {
         <p className="mt-4 text-center text-gray-500">⏳ Resend available in {timer}s</p>
       )}
 
-      <ToastContainer position="top-center" />
+      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 };

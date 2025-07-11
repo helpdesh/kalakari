@@ -12,7 +12,7 @@ const ArtisanOrdersPage = () => {
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`http://localhost:5000/api/orders/artisan/${artisanId}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/orders/artisan/${artisanId}`);
       setOrders(res.data);
     } catch (err) {
       toast.error('Failed to load artisan orders');
@@ -22,7 +22,7 @@ const ArtisanOrdersPage = () => {
 
   const updateStatus = async (orderId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus });
+      await axios.put(`${process.env.REACT_APP_API_URL}/orders/${orderId}/status`, { status: newStatus });
       toast.success('Order status updated');
       fetchOrders();
     } catch (err) {

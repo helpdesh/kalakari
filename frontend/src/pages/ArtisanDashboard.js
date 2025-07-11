@@ -95,12 +95,12 @@ const ArtisanDashboard = () => {
   useEffect(() => {
     if (user?.role === 'artisan') {
       const fetchProducts = async () => {
-        const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/artisan/${artisanId}`);
         setProducts(res.data);
       };
 
       const fetchOrders = async () => {
-        const res = await axios.get(`http://localhost:5000/api/orders/artisan/${artisanId}`);
+        const res = await axios.get(`${process.env.REACT_APP_API_URL}/orders/artisan/${artisanId}`);
         setOrders(res.data);
       };
 
@@ -126,16 +126,16 @@ const ArtisanDashboard = () => {
 
     try {
       if (form._id) {
-        await axios.put(`http://localhost:5000/api/products/${form._id}`, productData);
+        await axios.put(`${process.env.REACT_APP_API_URL}/products/${form._id}`, productData);
         toast.success('Product updated successfully ✅');
       } else {
-        await axios.post('http://localhost:5000/api/products', productData);
+        await axios.post(`${process.env.REACT_APP_API_URL}/products`, productData);
         toast.success('Product added successfully ✅');
       }
       setForm({ title: '', description: '', price: '', image: '', category: '', _id: '' });
 
       // Refresh products
-      const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/artisan/${artisanId}`);
       setProducts(res.data);
     } catch (error) {
       if (error.response?.status === 403) {
@@ -148,9 +148,9 @@ const ArtisanDashboard = () => {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/products/${id}`);
+      await axios.delete(`${process.env.REACT_APP_API_URL}/products/${id}`);
       toast.success('Product deleted successfully ❌');
-      const res = await axios.get(`http://localhost:5000/api/products/artisan/${artisanId}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/artisan/${artisanId}`);
       setProducts(res.data);
     } catch (error) {
       toast.error('Error deleting product');
@@ -171,9 +171,9 @@ const ArtisanDashboard = () => {
 
   const handleStatusUpdate = async (orderId, newStatus) => {
     try {
-      await axios.put(`http://localhost:5000/api/orders/${orderId}/status`, { status: newStatus });
+      await axios.put(`${process.env.REACT_APP_API_URL}/orders/${orderId}/status`, { status: newStatus });
       toast.success('Order status updated');
-      const res = await axios.get(`http://localhost:5000/api/orders/artisan/${artisanId}`);
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/orders/artisan/${artisanId}`);
       setOrders(res.data);
     } catch (err) {
       toast.error('Failed to update status');

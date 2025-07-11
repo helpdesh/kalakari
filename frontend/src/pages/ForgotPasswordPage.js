@@ -1,22 +1,38 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const isValidEmail = (email) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      await axios.post("http://localhost:5000/api/auth/forgot-password", { email });
-      setSubmitted(true);
-      navigate("/login"); // Redirect to login after submission
 
+    if (!isValidEmail(email)) {
+      toast.error("Please enter a valid email address");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/auth/forgot-password`, { email });
+      setSubmitted(true);
+      toast.success("Reset link sent (if email exists)");
+      setTimeout(() => navigate("/login"), 2000);
     } catch (err) {
+      setSubmitted(true); // still show message even on failure
+      toast.info("If this email exists, a reset link has been sent.");
       console.error(err);
-      setSubmitted(true); // still show the message for security reasons
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,19 +51,21 @@ const ForgotPasswordPage = () => {
               type="email"
               placeholder="Email Address"
               value={email}
-              onChange={e => setEmail(e.target.value)}
+              onChange={(e) => setEmail(e.target.value)}
               required
               className="w-full px-4 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
             />
             <button
               type="submit"
-              className="w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-semibold transition"
+              disabled={loading}
+              className={`w-full bg-orange-600 hover:bg-orange-700 text-white py-2 rounded font-semibold transition ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
-              Send Reset Link
+              {loading ? "Sending..." : "Send Reset Link"}
             </button>
           </form>
         )}
       </div>
+      <ToastContainer position="top-center" autoClose={3000} />
     </div>
   );
 };
