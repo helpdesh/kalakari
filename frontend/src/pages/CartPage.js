@@ -193,7 +193,7 @@ const CartPage = () => {
               <ul className="space-y-6">
                 {cartItems.map((item, index) => (
                   <li key={index} className="flex gap-4 border p-4 rounded shadow-sm">
-                    <img src={item.image} alt={item.title} className="w-24 h-24 object-cover rounded" />
+                    <img src={item.image} alt={item.title} className="w-full h-48 object-contain bg-white" />
                     <div className="flex-1">
                       <h4 className="text-lg font-semibold">{item.title}</h4>
                       <p className="text-sm text-gray-600">Price: ₹{item.price}</p>
