@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FiMenu, FiX } from 'react-icons/fi'; // Import icons for mobile menu
+import { FiMenu, FiX, FiHome, FiInfo, FiShoppingCart, FiUser, FiPackage, FiKey, FiLogOut } from 'react-icons/fi';
 import bannerImg from '../assets/Banner-img.jpg';
 
 const HomePage = () => {
@@ -11,7 +11,7 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const dropdownRef = useRef();
   const mobileMenuRef = useRef();
@@ -40,11 +40,9 @@ const HomePage = () => {
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      // Close dropdown if clicked outside
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
       }
-      // Close mobile menu if clicked outside
       if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
         setMobileMenuOpen(false);
       }
@@ -58,17 +56,17 @@ const HomePage = () => {
     localStorage.removeItem('token');
     toast.success('Logged out successfully ✅');
     navigate('/');
-    setMobileMenuOpen(false); // Close mobile menu after logout
+    setMobileMenuOpen(false);
   };
 
   const handleCategoryClick = (cat) => {
     navigate(`/category/${cat}`);
-    setMobileMenuOpen(false); // Close mobile menu when navigating
+    setMobileMenuOpen(false);
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800 pt-24">
-      {/* Header - Updated for mobile responsiveness */}
+    <div className="min-h-screen bg-gray-100 text-gray-800 pt-16 md:pt-24">
+      {/* Header */}
       <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md px-4 py-3 md:px-6 md:py-4 flex justify-between items-center">
         <Link
           to="/"
@@ -127,78 +125,115 @@ const HomePage = () => {
           )}
         </nav>
 
-        {/* Mobile Navigation */}
-        {mobileMenuOpen && (
-          <div 
+        {/* Mobile Navigation - Right Half Drawer */}
+        <div 
             ref={mobileMenuRef}
-            className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg py-4 px-6 z-40"
+            className={`fixed top-0 right-0 h-auto max-h-screen overflow-y-auto w-1/2 max-w-xs  bg-white shadow-xl z-50 transform transition-transform duration-300 ease-in-out ${
+              mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+            }`}
           >
-            <div className="flex flex-col space-y-4">
+
+          <div className="h-full flex flex-col">
+            {/* Menu Header */}
+            <div className="p-4 border-b border-gray-200 flex justify-between items-center">
+              <span className="font-bold text-orange-600">Menu</span>
+              <button 
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1 rounded-full hover:bg-gray-100"
+              >
+                <FiX size={20} />
+              </button>
+            </div>
+            
+            {/* Menu Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-2">
               <Link 
                 to="/" 
-                className="hover:underline py-2 border-b border-gray-100"
-                onClick={() => {
-                  window.scrollTo({ top: 0, behavior: 'smooth' });
-                  setMobileMenuOpen(false);
-                }}
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
+                onClick={() => setMobileMenuOpen(false)}
               >
-                🏠 Home
+                <FiHome className="flex-shrink-0" />
+                <span>Home</span>
               </Link>
 
               <a
                 href="#about-us"
-                className="hover:underline py-2 border-b border-gray-100 cursor-pointer"
-                onClick={e => {
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
+                onClick={(e) => {
                   e.preventDefault();
                   document.getElementById('about-us')?.scrollIntoView({ behavior: 'smooth' });
                   setMobileMenuOpen(false);
                 }}
               >
-                📖 About Us
+                <FiInfo className="flex-shrink-0" />
+                <span>About Us</span>
               </a>
 
               <Link 
                 to="/cart" 
-                className="hover:underline py-2 border-b border-gray-100"
+                className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                🛒 Cart
+                <FiShoppingCart className="flex-shrink-0" />
+                <span>Cart</span>
               </Link>
 
               {user ? (
                 <>
+                  {/* User Section Divider */}
+                  <div className="pt-2 mt-2 border-t border-gray-100">
+                    <div className="flex items-center gap-3 p-3 text-gray-500">
+                      <FiUser className="flex-shrink-0" />
+                      <span className="truncate">{user.name}</span>
+                    </div>
+                  </div>
+                  
                   <Link 
                     to="/orders" 
-                    className="hover:underline py-2 border-b border-gray-100"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    📦 My Orders
+                    <FiPackage className="flex-shrink-0" />
+                    <span>My Orders</span>
                   </Link>
+                  
                   <Link 
                     to="/update-password" 
-                    className="hover:underline py-2 border-b border-gray-100"
+                    className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    🔑 Update Password
+                    <FiKey className="flex-shrink-0" />
+                    <span>Update Password</span>
                   </Link>
+                  
                   <button 
                     onClick={handleLogout}
-                    className="text-left hover:underline py-2 border-b border-gray-100"
+                    className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600 text-left"
                   >
-                    🚪 Logout
+                    <FiLogOut className="flex-shrink-0" />
+                    <span>Logout</span>
                   </button>
                 </>
               ) : (
                 <Link 
                   to="/login" 
-                  className="hover:underline py-2 border-b border-gray-100"
+                  className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Login
+                  <FiUser className="flex-shrink-0" />
+                  <span>Login</span>
                 </Link>
               )}
             </div>
           </div>
+        </div>
+
+        {/* Overlay */}
+        {mobileMenuOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-30 z-40 md:hidden"
+            onClick={() => setMobileMenuOpen(false)}
+          />
         )}
       </header>
 
@@ -209,7 +244,7 @@ const HomePage = () => {
       >
         <div className="absolute inset-0 bg-black bg-opacity-40 flex flex-col justify-center items-center text-white text-center">
           <h2 className="text-2xl md:text-4xl font-bold mb-2">Not Just Handmade. Heartmade.</h2>
-          <p className="mb-4 max-w-md">Explore art you can feel — straight from the hands of India’s finest creators. 🧵🎨</p>
+          <p className="mb-4 max-w-md">Explore art you can feel — straight from the hands of India's finest creators. 🧵🎨</p>
           <button onClick={() => navigate('/cart')} className="bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded text-white">
             Shop Now
           </button>
@@ -294,7 +329,7 @@ const HomePage = () => {
       <footer className="bg-gray-900 text-white py-10 mt-12">
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Us */}
-          <div id ="about-us">
+          <div id="about-us">
             <h4 className="text-lg font-semibold mb-2">About Desi-Etsy</h4>
             <p className="text-sm text-gray-400">
               Desi-Etsy is dedicated to celebrating India's rich heritage of craftsmanship. We connect talented artisans with customers nationwide, making it easy to discover and purchase authentic, handmade products.<br /><br />
@@ -307,14 +342,14 @@ const HomePage = () => {
             <h4 className="text-lg font-semibold mb-2">Quick Links</h4>
             <ul className="space-y-1 text-sm text-gray-300">
               <li>
-              <Link
-                to="/"
-                className="hover:underline"
-                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                🏠 Home
-              </Link>
-            </li>
+                <Link
+                  to="/"
+                  className="hover:underline"
+                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                >
+                  🏠 Home
+                </Link>
+              </li>
               <li><Link to="/cart" className="hover:underline">🛒 Cart</Link></li>
               <li>
                 <Link
@@ -361,33 +396,28 @@ const HomePage = () => {
             <p className="text-sm text-gray-400">📧 Email: rohitkumar.pr45@gmail.com</p>
             <p className="text-sm text-gray-400">📍 Location: India</p>
             <div className="flex gap-3 mt-3">
-            <a href="https://instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">
-              {/* Instagram SVG */}
-              <svg className="w-6 h-6 inline" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                <rect width="20" height="20" x="2" y="2" rx="5" ry="5" stroke="currentColor" fill="none"/>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-                <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/>
-              </svg>
-            </a>
-            <a href="https://facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook">
-              {/* Facebook SVG */}
-              <svg className="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22 12a10 10 0 1 0-11.5 9.95v-7.05h-2.1v-2.9h2.1V9.5c0-2.07 1.23-3.22 3.13-3.22.91 0 1.86.16 1.86.16v2.05h-1.05c-1.03 0-1.35.64-1.35 1.3v1.56h2.3l-.37 2.9h-1.93v7.05A10 10 0 0 0 22 12"/>
-              </svg>
-            </a>
-            <a href="https://twitter.com/" target="_blank" rel="noreferrer" aria-label="Twitter">
-              {/* Twitter SVG */}
-              <svg className="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M22.46 6c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04A4.28 4.28 0 0 0 11.1 9.03c0 .34.04.67.1.99A12.13 12.13 0 0 1 3.1 5.1a4.28 4.28 0 0 0 1.32 5.71c-.7-.02-1.36-.21-1.94-.53v.05a4.28 4.28 0 0 0 3.43 4.19c-.33.09-.68.14-1.04.14-.25 0-.5-.02-.74-.07a4.29 4.29 0 0 0 4 2.98A8.6 8.6 0 0 1 2 19.54a12.13 12.13 0 0 0 6.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19 0-.39-.01-.58A8.72 8.72 0 0 0 24 4.59a8.5 8.5 0 0 1-2.54.7z"/>
-              </svg>
-            </a>
-          </div>
+              <a href="https://instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">
+                <svg className="w-6 h-6 inline" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <rect width="20" height="20" x="2" y="2" rx="5" ry="5" stroke="currentColor" fill="none"/>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+                  <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/>
+                </svg>
+              </a>
+              <a href="https://facebook.com/" target="_blank" rel="noreferrer" aria-label="Facebook">
+                <svg className="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22 12a10 10 0 1 0-11.5 9.95v-7.05h-2.1v-2.9h2.1V9.5c0-2.07 1.23-3.22 3.13-3.22.91 0 1.86.16 1.86.16v2.05h-1.05c-1.03 0-1.35.64-1.35 1.3v1.56h2.3l-.37 2.9h-1.93v7.05A10 10 0 0 0 22 12"/>
+                </svg>
+              </a>
+              <a href="https://twitter.com/" target="_blank" rel="noreferrer" aria-label="Twitter">
+                <svg className="w-6 h-6 inline" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M22.46 6c-.77.35-1.6.58-2.47.69a4.3 4.3 0 0 0 1.88-2.37 8.59 8.59 0 0 1-2.72 1.04A4.28 4.28 0 0 0 11.1 9.03c0 .34.04.67.1.99A12.13 12.13 0 0 1 3.1 5.1a4.28 4.28 0 0 0 1.32 5.71c-.7-.02-1.36-.21-1.94-.53v.05a4.28 4.28 0 0 0 3.43 4.19c-.33.09-.68.14-1.04.14-.25 0-.5-.02-.74-.07a4.29 4.29 0 0 0 4 2.98A8.6 8.6 0 0 1 2 19.54a12.13 12.13 0 0 0 6.56 1.92c7.88 0 12.2-6.53 12.2-12.2 0-.19 0-.39-.01-.58A8.72 8.72 0 0 0 24 4.59a8.5 8.5 0 0 1-2.54.7z"/>
+                </svg>
+              </a>
+            </div>
           </div>
         </div>
 
-
         {/* Bottom Text */}
-
         <div className="text-center text-gray-500 text-xs mt-6 border-t border-gray-700 pt-4 flex flex-col items-center gap-2">
           <button
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -399,7 +429,7 @@ const HomePage = () => {
         </div>
       </footer>
     </div>
-  ); 
+  );
 };
-export default HomePage;
 
+export default HomePage;
