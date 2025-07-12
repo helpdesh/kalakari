@@ -93,15 +93,38 @@ const ProductDetailsPage = () => {
             />
           </div>
 
-          <button
-            onClick={handleAddToCart}
-            aria-label="Add product to cart"
-            className={`mt-4 px-6 py-2 rounded text-white font-semibold transition duration-200 ${
-              alreadyInCart ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-600 hover:bg-green-700'
-            }`}
+          <div className="flex gap-4 mt-4">
+            <button
+              onClick={handleAddToCart}
+              aria-label="Add product to cart"
+              className={`px-6 py-2 rounded text-white font-semibold transition duration-200 ${
+                alreadyInCart ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-green-600 hover:bg-green-700'
+              }`}
+            >
+              {alreadyInCart ? 'Already in Cart' : 'Add to Cart 🛒'}
+            </button>
+
+            <button
+            onClick={() => {
+              const user = JSON.parse(localStorage.getItem('user'));
+              if (!user) {
+                toast.info('Please login to continue');
+                navigate('/login');
+                return;
+              }
+
+              if (!alreadyInCart) {
+                addToCart({ ...product, quantity });
+                toast.success('Added to cart 🛒');
+              }
+
+              navigate('/cart');
+            }}
+            className="px-6 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white font-semibold transition duration-200"
           >
-            {alreadyInCart ? 'Already in Cart' : 'Add to Cart 🛒'}
+            Shop Now 🛍️
           </button>
+          </div>
         </div>
       </div>
 
