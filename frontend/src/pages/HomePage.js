@@ -168,7 +168,7 @@ const HomePage = () => {
               key={p._id}
               className="bg-white rounded shadow overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg"
             >
-              <img src={p.image} alt={p.title} className="w-full h-48 object-contain bg-white" />
+              <img src={p.image} loading="lazy" alt={p.title} className="w-full h-48 object-contain bg-white" />
               <div className="p-4">
                 <h4 className="font-semibold text-lg">{p.title}</h4>
                 <p className="text-sm text-gray-600">{p.category}</p>
