@@ -1,5 +1,6 @@
 const express = require('express');
 const nodemailer = require('nodemailer');
+const User = require('../models/User'); // <-- Add this line
 const router = express.Router();
 
 const otpStore = new Map(); // temp storage

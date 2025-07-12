@@ -1,3 +1,5 @@
+// ✅ FRONTEND - RegisterPage.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
@@ -26,26 +28,25 @@ const RegisterPage = () => {
     return '';
   };
 
-      const handleSendOtp = async () => {
-      const passwordError = getPasswordError(form.password);
-      if (passwordError) {
-        toast.error(passwordError);
-        return;
-      }
+  const handleSendOtp = async () => {
+    const passwordError = getPasswordError(form.password);
+    if (passwordError) {
+      toast.error(passwordError);
+      return;
+    }
 
-      try {
-        await axios.post(`${process.env.REACT_APP_API_URL}/otp/send-email-otp`, { email: form.email });
-        toast.success('OTP sent to your email');
-        setStep(2);
-      } catch (err) {
-        if (err.response && err.response.data && err.response.data.error) {
-          toast.error(err.response.data.error);  // e.g., "Email already exists"
-        } else {
-          toast.error('Failed to send OTP');
-        }
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/otp/send-email-otp`, { email: form.email });
+      toast.success('OTP sent to your email');
+      setStep(2);
+    } catch (err) {
+      if (err.response && err.response.data && err.response.data.error) {
+        toast.error(err.response.data.error);
+      } else {
+        toast.error('Failed to send OTP');
       }
-    };
-
+    }
+  };
 
   const handleVerifyOtp = async () => {
     try {
@@ -57,12 +58,19 @@ const RegisterPage = () => {
       if (res.data.verified) {
         await axios.post(`${process.env.REACT_APP_API_URL}/auth/register`, form);
         toast.success('Registration successful!');
-        navigate('/login');
+        setTimeout(() => navigate('/login'), 2000);
       } else {
         toast.error('Invalid OTP');
+        setOtp('');
+        setStep(1);
       }
-    } catch {
-      toast.error('Verification failed');
+    } catch (err) {
+      console.error(err);
+      if (err.response && err.response.data && err.response.data.message) {
+        toast.error(err.response.data.message);
+      } else {
+        toast.error('Verification failed');
+      }
     }
   };
 
