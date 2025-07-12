@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import bannerImg from '../assets/Banner-img.jpg'; // ✅ import from src/assets
+import { FiMenu, FiX } from 'react-icons/fi'; // Import icons for mobile menu
+import bannerImg from '../assets/Banner-img.jpg';
 
 const HomePage = () => {
   const [showAll, setShowAll] = useState(false);
@@ -10,8 +11,10 @@ const HomePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // State for mobile menu
 
   const dropdownRef = useRef();
+  const mobileMenuRef = useRef();
   const navigate = useNavigate();
   const user = JSON.parse(localStorage.getItem('user')) || null;
 
@@ -27,7 +30,6 @@ const HomePage = () => {
     const fetchFeatured = async () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/products`);
-
         setProducts(res.data);
       } catch (err) {
         toast.error('Failed to load products');
@@ -38,8 +40,13 @@ const HomePage = () => {
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
+      // Close dropdown if clicked outside
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShowDropdown(false);
+      }
+      // Close mobile menu if clicked outside
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target)) {
+        setMobileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleOutsideClick);
@@ -51,29 +58,42 @@ const HomePage = () => {
     localStorage.removeItem('token');
     toast.success('Logged out successfully ✅');
     navigate('/');
+    setMobileMenuOpen(false); // Close mobile menu after logout
   };
 
   const handleCategoryClick = (cat) => {
     navigate(`/category/${cat}`);
+    setMobileMenuOpen(false); // Close mobile menu when navigating
   };
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 pt-24">
-      {/* Header */}
-      <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md px-6 py-4 flex justify-between items-center">
+      {/* Header - Updated for mobile responsiveness */}
+      <header className="fixed top-0 left-0 w-full z-50 bg-white shadow-md px-4 py-3 md:px-6 md:py-4 flex justify-between items-center">
         <Link
           to="/"
-          className="text-2xl font-bold text-orange-600 hover:underline"
+          className="text-xl md:text-2xl font-bold text-orange-600 hover:underline"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
           Desi-Etsy 🧵
         </Link>
-        <nav className="flex items-center gap-4">
+        
+        {/* Mobile menu button */}
+        <button
+          className="md:hidden p-2 rounded-md text-gray-700 hover:text-orange-600 focus:outline-none"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="Toggle menu"
+        >
+          {mobileMenuOpen ? <FiX size={24} /> : <FiMenu size={24} />}
+        </button>
+
+        {/* Desktop Navigation */}
+        <nav className="hidden md:flex items-center gap-4">
           <Link to="/" className="hover:underline"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              >
-                🏠 Home
-            </Link>
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          >
+            🏠 Home
+          </Link>
 
           <a
             href="#about-us"
@@ -106,6 +126,80 @@ const HomePage = () => {
             <Link to="/login" className="hover:underline">Login</Link>
           )}
         </nav>
+
+        {/* Mobile Navigation */}
+        {mobileMenuOpen && (
+          <div 
+            ref={mobileMenuRef}
+            className="md:hidden absolute top-16 left-0 right-0 bg-white shadow-lg py-4 px-6 z-40"
+          >
+            <div className="flex flex-col space-y-4">
+              <Link 
+                to="/" 
+                className="hover:underline py-2 border-b border-gray-100"
+                onClick={() => {
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                  setMobileMenuOpen(false);
+                }}
+              >
+                🏠 Home
+              </Link>
+
+              <a
+                href="#about-us"
+                className="hover:underline py-2 border-b border-gray-100 cursor-pointer"
+                onClick={e => {
+                  e.preventDefault();
+                  document.getElementById('about-us')?.scrollIntoView({ behavior: 'smooth' });
+                  setMobileMenuOpen(false);
+                }}
+              >
+                📖 About Us
+              </a>
+
+              <Link 
+                to="/cart" 
+                className="hover:underline py-2 border-b border-gray-100"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                🛒 Cart
+              </Link>
+
+              {user ? (
+                <>
+                  <Link 
+                    to="/orders" 
+                    className="hover:underline py-2 border-b border-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    📦 My Orders
+                  </Link>
+                  <Link 
+                    to="/update-password" 
+                    className="hover:underline py-2 border-b border-gray-100"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    🔑 Update Password
+                  </Link>
+                  <button 
+                    onClick={handleLogout}
+                    className="text-left hover:underline py-2 border-b border-gray-100"
+                  >
+                    🚪 Logout
+                  </button>
+                </>
+              ) : (
+                <Link 
+                  to="/login" 
+                  className="hover:underline py-2 border-b border-gray-100"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Banner */}
