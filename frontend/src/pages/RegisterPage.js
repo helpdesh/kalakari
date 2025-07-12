@@ -26,21 +26,26 @@ const RegisterPage = () => {
     return '';
   };
 
-  const handleSendOtp = async () => {
-    const passwordError = getPasswordError(form.password);
-    if (passwordError) {
-      toast.error(passwordError);
-      return;
-    }
+      const handleSendOtp = async () => {
+      const passwordError = getPasswordError(form.password);
+      if (passwordError) {
+        toast.error(passwordError);
+        return;
+      }
 
-    try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/otp/send-email-otp`, { email: form.email });
-      toast.success('OTP sent to your email');
-      setStep(2);
-    } catch {
-      toast.error('Failed to send OTP');
-    }
-  };
+      try {
+        await axios.post(`${process.env.REACT_APP_API_URL}/otp/send-email-otp`, { email: form.email });
+        toast.success('OTP sent to your email');
+        setStep(2);
+      } catch (err) {
+        if (err.response && err.response.data && err.response.data.error) {
+          toast.error(err.response.data.error);  // e.g., "Email already exists"
+        } else {
+          toast.error('Failed to send OTP');
+        }
+      }
+    };
+
 
   const handleVerifyOtp = async () => {
     try {

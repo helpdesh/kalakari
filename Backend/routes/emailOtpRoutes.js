@@ -16,31 +16,37 @@ const transporter = nodemailer.createTransport({
 // Send OTP via email
 router.post('/send-email-otp', async (req, res) => {
   const { email } = req.body;
+
+  // Check if email already exists
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.status(400).json({ error: 'Email already exists' });
+  }
+
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
   const mailOptions = {
-  from: process.env.MAIL_USER,
-  to: email,
-  subject: '🛡️ OTP Verification - Desi-Etsy',
-  html: `
-    <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;">
-      <h2 style="color: #cc5200;">Desi-Etsy OTP Verification</h2>
-      <p>Dear User,</p>
-      <p>Thank you for registering with <strong>Desi-Etsy</strong> — your go-to marketplace for handmade treasures.</p>
-      <p><strong style="font-size: 18px;">🔐 Your One-Time Password (OTP): <span style="color: #cc5200;">${otp}</span></strong></p>
-      <p>This OTP is valid for <strong>5 minutes</strong>. Please do not share it with anyone for security reasons.</p>
-      <p>If you did not initiate this request, you can safely ignore this message.</p>
-      <hr style="margin: 20px 0;">
-      <p style="color: #888;">Best regards,<br>Desi-Etsy Team</p>
-    </div>
-  `
-};
-
+    from: process.env.MAIL_USER,
+    to: email,
+    subject: '🛡️ OTP Verification - Desi-Etsy',
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px; max-width: 500px; margin: auto;">
+        <h2 style="color: #cc5200;">Desi-Etsy OTP Verification</h2>
+        <p>Dear User,</p>
+        <p>Thank you for registering with <strong>Desi-Etsy</strong>.</p>
+        <p><strong style="font-size: 18px;">🔐 Your OTP: <span style="color: #cc5200;">${otp}</span></strong></p>
+        <p>This OTP is valid for <strong>5 minutes</strong>.</p>
+        <p>If you did not request this, ignore this message.</p>
+        <hr style="margin: 20px 0;">
+        <p style="color: #888;">Best regards,<br>Desi-Etsy Team</p>
+      </div>
+    `
+  };
 
   try {
     await transporter.sendMail(mailOptions);
     otpStore.set(email, otp);
-    setTimeout(() => otpStore.delete(email), 5 * 60 * 1000); // 5 min
+    setTimeout(() => otpStore.delete(email), 5 * 60 * 1000); // Clear after 5 min
     res.status(200).json({ message: 'OTP sent successfully' });
   } catch (err) {
     console.error(err);
