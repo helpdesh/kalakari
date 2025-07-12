@@ -121,7 +121,10 @@ const HomePage = () => {
               )}
             </div>
           ) : (
-            <Link to="/login" className="hover:underline">Login</Link>
+            <Link to="/login" className="flex items-center gap-1 hover:underline">
+              <FiUser /> <span>Login</span>
+            </Link>
+
           )}
         </nav>
 
