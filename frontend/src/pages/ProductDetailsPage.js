@@ -16,6 +16,8 @@ const ProductDetailsPage = () => {
   const [comment, setComment] = useState(''); 
   const navigate = useNavigate();
 
+  const user = JSON.parse(localStorage.getItem('user'));
+
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -62,25 +64,33 @@ const ProductDetailsPage = () => {
 
   // Handle review submission
     const handleSubmitReview = async (e) => {
-      e.preventDefault();
-      try {
-        const { data } = await axios.post(
-          `${process.env.REACT_APP_API_URL}/products/${id}/reviews`,
-          { rating, comment },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-            },
-          }
-        );
-        setProduct(data); // Update reviews
-        toast.success('Review submitted!');
-        setRating('');
-        setComment('');
-      } catch (err) {
-        toast.error('Failed to submit review');
+  e.preventDefault();
+
+  if (!rating || !comment.trim()) {
+    toast.error('Please fill out both rating and comment');
+    return;
+  }
+
+  try {
+    const { data } = await axios.post(
+      `${process.env.REACT_APP_API_URL}/products/${id}/reviews`,
+      { rating, comment },
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
       }
-    };
+    );
+    setProduct(data);
+    toast.success('Review submitted!');
+    setRating('');
+    setComment('');
+  } catch (err) {
+    console.error(err.response?.data || err.message); // helpful debug
+    toast.error('Failed to submit review');
+  }
+};
+
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
