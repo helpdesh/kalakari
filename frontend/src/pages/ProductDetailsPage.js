@@ -14,6 +14,8 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const [userRating, setUserRating] = useState('');
+  const [comment, setComment] = useState('');
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -49,6 +51,38 @@ const ProductDetailsPage = () => {
     }
   };
 
+  const handleReviewSubmit = async () => {
+    if (!userRating) {
+      toast.error('Please select a rating');
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('token');
+      await axios.post(
+        `${process.env.REACT_APP_API_URL}/products/${id}/review`,
+        { rating: userRating, comment },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      toast.success('Review submitted!');
+      setUserRating('');
+      setComment('');
+      window.location.reload();
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Error submitting review');
+    }
+  };
+
+  const calculateAverageRating = (reviews) => {
+    if (!reviews || reviews.length === 0) return 0;
+    const sum = reviews.reduce((acc, curr) => acc + curr.rating, 0);
+    return (sum / reviews.length).toFixed(1);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-[60vh]">
@@ -58,6 +92,8 @@ const ProductDetailsPage = () => {
   }
 
   if (!product) return null;
+
+  const averageRating = calculateAverageRating(product.reviews);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-10">
@@ -73,12 +109,46 @@ const ProductDetailsPage = () => {
           <p className="text-indigo-600 font-medium text-lg">{product.category}</p>
 
           <div className="flex items-center gap-1 text-yellow-500 text-xl">
-            {'⭐'.repeat(product.rating || 4)}
-            <span className="text-sm text-gray-500 ml-2">({product.rating || 4}/5)</span>
+            {'⭐'.repeat(Math.round(averageRating))}
+            <span className="text-sm text-gray-500 ml-2">
+              ({averageRating}/5 from {product.reviews?.length || 0} reviews)
+            </span>
           </div>
 
           <p className="text-xl text-gray-800 font-semibold">₹{product.price}</p>
           <p className="text-gray-700">{product.description}</p>
+
+          {user && (
+            <div className="mt-6 border-t pt-4">
+              <h3 className="text-lg font-bold mb-2">Rate this Product</h3>
+              <div className="flex items-center gap-2 mb-2">
+                <label htmlFor="rating" className="font-medium">Rating:</label>
+                <select
+                  id="rating"
+                  value={userRating}
+                  onChange={(e) => setUserRating(Number(e.target.value))}
+                  className="border rounded px-2 py-1"
+                >
+                  <option value="">Select</option>
+                  {[1, 2, 3, 4, 5].map(r => (
+                    <option key={r} value={r}>{r} Star{r > 1 && 's'}</option>
+                  ))}
+                </select>
+              </div>
+              <textarea
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Write a comment (optional)"
+                className="w-full border rounded px-3 py-2 mb-2"
+              />
+              <button
+                onClick={handleReviewSubmit}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+              >
+                Submit Review
+              </button>
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <label htmlFor="quantity" className="font-medium">Quantity:</label>
@@ -125,6 +195,24 @@ const ProductDetailsPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Review Display Section */}
+      {product.reviews?.length > 0 && (
+        <div className="mt-10 bg-white rounded shadow p-6">
+          <h3 className="text-xl font-bold mb-4">Customer Reviews</h3>
+          <div className="space-y-4">
+            {product.reviews.map((rev, idx) => (
+              <div key={idx} className="border-b pb-3">
+                <div className="font-semibold">{rev.name}</div>
+                <div className="text-yellow-500 text-sm">
+                  {'⭐'.repeat(rev.rating)} <span className="text-gray-500 ml-2">{rev.rating}/5</span>
+                </div>
+                <div className="text-gray-700">{rev.comment}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <ToastContainer position="top-center" autoClose={2000} />
     </div>

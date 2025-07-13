@@ -309,10 +309,17 @@ const HomePage = () => {
           />
           <div className="p-4">
             <h4 className="font-semibold text-lg">{p.title}</h4>
+            {p.rating >= 4.5 && (
+              <span className="inline-block text-xs text-green-600 bg-green-100 px-2 py-0.5 rounded mb-1">
+                🌟 Best Seller
+              </span>
+            )}
             <p className="text-sm text-gray-600">{p.category}</p>
-            <p className="text-orange-600 font-bold mt-2">₹{p.price}</p>
-
-            {/* Optional: Keep this button for visual feedback */}
+            <div className="flex items-center gap-1 text-yellow-500 text-sm mt-2">
+            {'⭐'.repeat(Math.round(p.rating))}
+            <span className="text-gray-500 ml-1">({p.rating?.toFixed(1) || 0}/5)</span>
+          </div>
+            <p className="text-orange-600 font-bold mt-1">₹{p.price}</p>
             <div className="flex justify-center mt-2">
               <span className="bg-orange-600 text-white px-4 py-1 rounded inline-block pointer-events-none">
                 View Product

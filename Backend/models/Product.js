@@ -14,6 +14,22 @@ const productSchema = new mongoose.Schema(
       ref: 'User',
       required: true,
     },
+    rating: {
+      type: Number,
+      default: 0
+    },
+    numReviews: {
+      type: Number,
+      default: 0
+    },
+    reviews: [
+      {
+        user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+        name: String,
+        rating: Number,
+        comment: String
+      }
+    ],
     isApproved: { type: Boolean, default: false },
 });
 

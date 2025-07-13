@@ -25,6 +25,39 @@ router.post('/', async (req, res) => {
   }
 });
 
+// POST /products/:id/review
+router.post('/:id/review', protect, async (req, res) => {
+  const { rating, comment } = req.body;
+
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+
+    // Check if user already reviewed
+    const alreadyReviewed = product.reviews.find(
+      (r) => r.user.toString() === req.user.id
+    );
+    if (alreadyReviewed) return res.status(400).json({ message: 'Already reviewed' });
+
+    const review = {
+      user: req.user.id,
+      name: req.user.name,
+      rating: Number(rating),
+      comment
+    };
+
+    product.reviews.push(review);
+    product.numReviews = product.reviews.length;
+    product.rating =
+      product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length;
+
+    await product.save();
+    res.status(201).json({ message: 'Review added successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 
 // ✅ Get all approved products
 router.get('/', async (req, res) => {
