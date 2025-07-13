@@ -296,23 +296,30 @@ const HomePage = () => {
         <h3 className="text-xl font-semibold mb-4 text-center">✨ Featured Products</h3>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {(showAll ? filteredProducts : filteredProducts.slice(0, 8)).map(p => (
-            <div
-              key={p._id}
-              className="bg-white rounded shadow overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg"
-            >
-              <img src={p.image} loading="lazy" alt={p.title} className="w-full h-48 object-contain bg-white" />
-              <div className="p-4">
-                <h4 className="font-semibold text-lg">{p.title}</h4>
-                <p className="text-sm text-gray-600">{p.category}</p>
-                <p className="text-orange-600 font-bold mt-2">₹{p.price}</p>
-                <Link
-                  to={`/product/${p._id}`}
-                  className="mt-2 inline-block bg-orange-600 hover:bg-orange-700 text-white px-4 py-1 rounded"
-                >
-                  View Product
-                </Link>
-              </div>
+            <Link
+          to={`/product/${p._id}`}
+          key={p._id}
+          className="bg-white rounded shadow overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg block"
+        >
+          <img
+            src={p.image}
+            loading="lazy"
+            alt={p.title}
+            className="w-full h-48 object-contain bg-white"
+          />
+          <div className="p-4">
+            <h4 className="font-semibold text-lg">{p.title}</h4>
+            <p className="text-sm text-gray-600">{p.category}</p>
+            <p className="text-orange-600 font-bold mt-2">₹{p.price}</p>
+
+            {/* Optional: Keep this button for visual feedback */}
+            <div className="flex justify-center mt-2">
+              <span className="bg-orange-600 text-white px-4 py-1 rounded inline-block pointer-events-none">
+                View Product
+              </span>
             </div>
+          </div>
+        </Link>
           ))}
         </div>
 

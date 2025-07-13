@@ -94,6 +94,36 @@ router.delete('/:id', async (req, res) => {
   }
 });
 
+// ✅ Add a review to a product
+router.post('/:id/reviews', protectRoute, async (req, res) => {
+  const product = await Product.findById(req.params.id);
+  const { rating, comment } = req.body;
+
+  if (product) {
+    const alreadyReviewed = product.reviews.find(r => r.user.toString() === req.user._id.toString());
+    if (alreadyReviewed) {
+      return res.status(400).json({ message: 'Product already reviewed' });
+    }
+
+    const review = {
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+      user: req.user._id,
+    };
+
+    product.reviews.push(review);
+    product.numReviews = product.reviews.length;
+    product.rating = product.reviews.reduce((acc, r) => acc + r.rating, 0) / product.reviews.length;
+
+    await product.save();
+    res.status(201).json(product);
+  } else {
+    res.status(404).json({ message: 'Product not found' });
+  }
+});
+
+
 // ✅ Get product by ID (⚠️ placed last to avoid conflicts)
 router.get('/:id', async (req, res) => {
   try {
