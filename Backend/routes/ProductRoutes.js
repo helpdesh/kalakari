@@ -36,7 +36,7 @@ router.get('/', async (req, res) => {
 });
 
 
-// ✅ Add a review to a product
+// ✅ Add review route FIRST (before :id)
 router.post('/:id/reviews', protect, async (req, res) => {
   const { rating, comment } = req.body;
 
@@ -70,6 +70,8 @@ router.post('/:id/reviews', protect, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// ✅ Now it's safe to define this
 router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
@@ -79,6 +81,7 @@ router.get('/:id', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 // ✅ Get products by artisan ID
 router.get('/artisan/:artisanId', async (req, res) => {
   try {

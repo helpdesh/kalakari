@@ -20,7 +20,8 @@ const productSchema = new mongoose.Schema({
   artisanId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   
   isApproved: { type: Boolean, default: false },
-  reviews: [reviewSchema],
   numReviews: Number,
+  reviews: [reviewSchema],
+  
 });
 module.exports = mongoose.model('Product', productSchema);
