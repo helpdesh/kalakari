@@ -316,9 +316,9 @@ const HomePage = () => {
             )}
             <p className="text-sm text-gray-600">{p.category}</p>
             <div className="flex items-center gap-1 text-yellow-500 text-sm mt-2">
-            {'⭐'.repeat(Math.round(p.rating))}
-            <span className="text-gray-500 ml-1">({p.rating?.toFixed(1) || 0}/5)</span>
-          </div>
+              {'⭐'.repeat(p.rating || 4)}
+              <span className="text-gray-500 ml-1">({p.rating || 4}/5)</span>
+            </div>
             <p className="text-orange-600 font-bold mt-1">₹{p.price}</p>
             <div className="flex justify-center mt-2">
               <span className="bg-orange-600 text-white px-4 py-1 rounded inline-block pointer-events-none">

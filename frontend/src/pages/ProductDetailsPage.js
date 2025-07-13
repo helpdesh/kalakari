@@ -14,9 +14,6 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [userRating, setUserRating] = useState(0);
-  const [comment, setComment] = useState('');
-  const [reviews, setReviews] = useState([]);
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -25,7 +22,6 @@ const ProductDetailsPage = () => {
       try {
         const res = await axios.get(`${process.env.REACT_APP_API_URL}/products/${id}`);
         setProduct(res.data);
-        setReviews(res.data.reviews || []);
       } catch (err) {
         toast.error('Failed to load product');
         navigate('/');
@@ -51,46 +47,6 @@ const ProductDetailsPage = () => {
       addToCart({ ...product, quantity });
       toast.success('Added to cart');
     }
-  };
-
-  const handleReviewSubmit = async () => {
-    if (!userRating) {
-      toast.error('Please select a rating');
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      await axios.post(
-        `${process.env.REACT_APP_API_URL}/products/${id}/review`,
-        { rating: userRating, comment },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      toast.success('Review submitted!');
-      setUserRating(0);
-      setComment('');
-      window.location.reload();
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Error submitting review');
-    }
-  };
-
-  const renderStars = (count) => {
-    return [...Array(5)].map((_, i) => (
-      <span
-        key={i}
-        onClick={() => setUserRating(i + 1)}
-        className={`cursor-pointer text-2xl ${
-          i < userRating ? 'text-yellow-400' : 'text-gray-300'
-        }`}
-      >
-        ★
-      </span>
-    ));
   };
 
   if (loading) {
@@ -125,25 +81,6 @@ const ProductDetailsPage = () => {
 
           <p className="text-xl text-gray-800 font-semibold">₹{product.price}</p>
           <p className="text-gray-700">{product.description}</p>
-
-          {user && (
-            <div className="mt-6 border-t pt-4">
-              <h3 className="text-lg font-bold mb-2">Rate this Product</h3>
-              <div className="flex items-center mb-2">{renderStars(userRating)}</div>
-              <textarea
-                value={comment}
-                onChange={(e) => setComment(e.target.value)}
-                placeholder="Write a comment (optional)"
-                className="w-full border rounded px-3 py-2 mb-2"
-              />
-              <button
-                onClick={handleReviewSubmit}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
-              >
-                Submit Review
-              </button>
-            </div>
-          )}
 
           <div className="flex items-center gap-2">
             <label htmlFor="quantity" className="font-medium">Quantity:</label>
@@ -189,25 +126,6 @@ const ProductDetailsPage = () => {
             </button>
           </div>
         </div>
-      </div>
-
-      {/* Show all reviews */}
-      <div className="mt-10 max-w-4xl mx-auto bg-white rounded shadow p-6">
-        <h3 className="text-xl font-bold mb-4">User Reviews</h3>
-        {reviews.length === 0 ? (
-          <p className="text-gray-500">No reviews yet.</p>
-        ) : (
-          reviews.map((rev, idx) => (
-            <div key={idx} className="mb-4 border-b pb-3">
-              <div className="flex items-center gap-2 text-yellow-500 text-lg">
-                {'★'.repeat(rev.rating)}{' '}
-                <span className="text-sm text-gray-600 ml-2">({rev.rating}/5)</span>
-              </div>
-              {rev.comment && <p className="text-gray-700 mt-1">{rev.comment}</p>}
-              <p className="text-xs text-gray-400 mt-1">By {rev.user?.name || 'Anonymous'}</p>
-            </div>
-          ))
-        )}
       </div>
 
       <ToastContainer position="top-center" autoClose={2000} />
