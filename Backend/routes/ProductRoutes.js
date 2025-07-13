@@ -35,16 +35,6 @@ router.get('/', async (req, res) => {
   }
 });
 
-// ✅ Get product by ID (⚠️ should be after review route)
-router.get('/:id', async (req, res) => {
-  try {
-    const product = await Product.findById(req.params.id);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
-    res.status(200).json(product);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
 
 // ✅ Add a review to a product
 router.post('/:id/reviews', protect, async (req, res) => {
@@ -71,7 +61,8 @@ router.post('/:id/reviews', protect, async (req, res) => {
     product.reviews.push(review);
     product.numReviews = product.reviews.length;
     product.rating =
-      product.reviews.reduce((acc, item) => item.rating + acc, 0) / product.reviews.length;
+      product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+      product.reviews.length;
 
     const updatedProduct = await product.save();
     res.status(201).json(updatedProduct);
@@ -79,7 +70,15 @@ router.post('/:id/reviews', protect, async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
-
+router.get('/:id', async (req, res) => {
+  try {
+    const product = await Product.findById(req.params.id);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
+    res.status(200).json(product);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 // ✅ Get products by artisan ID
 router.get('/artisan/:artisanId', async (req, res) => {
   try {
