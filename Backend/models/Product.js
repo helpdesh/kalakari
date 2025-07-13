@@ -15,14 +15,7 @@ const productSchema = new mongoose.Schema(
       required: true,
     },
     isApproved: { type: Boolean, default: false },
-
-    // Reviews
-    numReviews: { type: Number, default: 0 },
-    reviews: [reviewSchema],
-    rating: { type: Number, default: 0 },
-  },
-  { timestamps: true }
-);
+});
 
 // ✅ Export model
 module.exports = mongoose.model('Product', productSchema);
