@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useCart } from '../context/CartContext';
 import { toast, ToastContainer } from 'react-toastify';
+import { useWishlist} from '../context/WishlistContext';
 import 'react-toastify/dist/ReactToastify.css';
 import '../index.css';
 
@@ -14,6 +15,8 @@ const ProductDetailsPage = () => {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+
 
   const user = JSON.parse(localStorage.getItem('user'));
 
@@ -103,6 +106,27 @@ const ProductDetailsPage = () => {
               }`}
             >
               {alreadyInCart ? 'Already in Cart' : 'Add to Cart 🛒'}
+            </button>
+              {/* Wishlist Button */}
+            <button
+              onClick={() => {
+                if (!user) {
+                  toast.info('Please login to add to wishlist');
+                  navigate('/login');
+                  return;
+                }
+
+                if (isInWishlist(product._id)) {
+                  removeFromWishlist(product._id);
+                  toast.info('Removed from Wishlist');
+                } else {
+                  addToWishlist(product);
+                  toast.success('Added to Wishlist ❤️');
+                }
+              }}
+              className="px-6 py-2 rounded bg-pink-500 hover:bg-pink-600 text-white font-semibold"
+            >
+              {isInWishlist(product._id) ? '❤️ Wishlisted' : 'Add to Wishlist'}
             </button>
 
             <button
