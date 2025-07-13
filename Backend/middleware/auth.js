@@ -1,6 +1,7 @@
+// middleware/authMiddleware.js
 const jwt = require('jsonwebtoken');
 
-module.exports = (req, res, next) => {
+const protect = (req, res, next) => {
   const token = req.header('Authorization')?.split(' ')[1];
   if (!token) return res.status(401).json({ message: 'Access Denied: No token provided' });
 
@@ -9,7 +10,6 @@ module.exports = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    // Specific error messages
     if (err.name === 'TokenExpiredError') {
       return res.status(401).json({ message: 'Token expired' });
     }
@@ -19,3 +19,5 @@ module.exports = (req, res, next) => {
     res.status(400).json({ message: 'Invalid token' });
   }
 };
+
+module.exports = { protect };

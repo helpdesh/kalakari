@@ -2,6 +2,7 @@ const express = require('express');
 const Product = require('../models/Product');
 const User = require('../models/User'); // ✅ Added to check artisan approval
 const router = express.Router();
+const { protect } = require('../middleware/auth'); // ✅ Import auth middleware
 
 // ✅ Create a new product (only if artisan is approved)
 router.post('/', async (req, res) => {
