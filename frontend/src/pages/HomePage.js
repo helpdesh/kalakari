@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-import { FiMenu, FiX, FiHome, FiInfo, FiShoppingCart, FiUser, FiPackage, FiKey, FiLogOut } from 'react-icons/fi';
+import { FiMenu, FiX, FiHome, FiInfo, FiShoppingCart, FiUser, FiPackage, FiKey, FiLogOut, FiHeart } from 'react-icons/fi';
 import bannerImg from '../assets/Banner-img.jpg';
+import { useWishlist } from '../context/WishlistContext';
 
 const HomePage = () => {
   const [showAll, setShowAll] = useState(false);
@@ -12,6 +13,8 @@ const HomePage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { wishlistItems, addToWishlist, removeFromWishlist } = useWishlist();
+
 
   const dropdownRef = useRef();
   const mobileMenuRef = useRef();
@@ -64,6 +67,8 @@ const HomePage = () => {
     setMobileMenuOpen(false);
   };
 
+  const isInWishlist = (productId) => wishlistItems.some(p => p._id === productId);
+
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 pt-16 md:pt-24">
       {/* Header */}
@@ -86,6 +91,7 @@ const HomePage = () => {
         </button>
 
         {/* Desktop Navigation */}
+
         <nav className="hidden md:flex items-center gap-4">
           <Link to="/" className="hover:underline"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
@@ -103,7 +109,15 @@ const HomePage = () => {
           >
             📖 About Us
           </a>
+
           <Link to="/cart" className="hover:underline">🛒 Cart</Link>
+
+          {/* ✅ Add Wishlist here */}
+          <Link to="/wishlist" className="hover:underline flex items-center gap-1">
+            <FiHeart />
+            <span>Wishlist</span>
+          </Link>
+
           {user ? (
             <div className="relative" ref={dropdownRef}>
               <button
@@ -124,7 +138,6 @@ const HomePage = () => {
             <Link to="/login" className="flex items-center gap-1 hover:underline">
               <FiUser /> <span>Login</span>
             </Link>
-
           )}
         </nav>
 
@@ -180,6 +193,14 @@ const HomePage = () => {
                 <FiShoppingCart className="flex-shrink-0" />
                 <span>Cart</span>
               </Link>
+              <Link 
+              to="/wishlist" 
+              className="flex items-center gap-3 p-3 rounded-lg hover:bg-orange-50 text-gray-700 hover:text-orange-600"
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              <FiHeart className="flex-shrink-0" />
+              <span>Wishlist</span>
+            </Link>
 
               {user ? (
                 <>
@@ -301,6 +322,21 @@ const HomePage = () => {
           key={p._id}
           className="bg-white rounded shadow overflow-hidden transform transition duration-300 hover:scale-105 hover:shadow-lg block"
         >
+          {/* Wishlist Icon */}
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              isInWishlist(p._id) ? removeFromWishlist(p._id) : addToWishlist(p);
+            }}
+            className="absolute top-2 right-2 text-red-500 hover:text-red-700 z-10"
+            title={isInWishlist(p._id) ? 'Remove from Wishlist' : 'Add to Wishlist'}
+          >
+            <FiHeart
+              className={`w-6 h-6 ${isInWishlist(p._id) ? 'fill-current' : ''}`}
+            />
+          </button>
+
           <img
             src={p.image}
             loading="lazy"

@@ -15,6 +15,7 @@ import UpdatePasswordPage from './pages/UpdatePasswordPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage';
 import TermsConditionsPage from './pages/TermsConditionsPage';
+import WishlistPage from './pages/WishlistPage';
 import NavBar from './components/NavBar';
 import { CartProvider } from './context/CartContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -42,6 +43,7 @@ function App() {
             <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
             <Route path="/privacy" element={<PrivacyPolicyPage />} />
             <Route path="/terms" element={<TermsConditionsPage />} />
+            <Route path="/wishlist" element={<><NavBar /><WishlistPage /></>} />
 
             {/* Protected route: Customer/Artisan/Admin can access cart */}
             <Route
