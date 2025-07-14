@@ -6,7 +6,7 @@ A full-featured MERN stack platform where artisans showcase handmade products, a
 
 ## 🛠 Tech Stack
 
-- **Frontend:** React.js, React Router, CSS3
+- **Frontend:** React.js, React Router, Tailwind css 
 - **Backend:** Node.js, Express.js
 - **Database:** MongoDB with Mongoose
 - **Authentication:** JWT-based login & registration
