@@ -21,7 +21,7 @@ router.post('/order-confirmation', async (req, res) => {
   const mailOptions = {
     from: process.env.MAIL_USER,
     to: customerEmail,
-    subject: '🧾 Order Confirmation - Desi-Etsy',
+    subject: '🧾 Order Confirmation - Kalakaari',
     html: `
       <div style="font-family: Arial; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
         <h2 style="color: #cc5200;">Thank you for your order, ${customerName}!</h2>
@@ -32,7 +32,7 @@ router.post('/order-confirmation', async (req, res) => {
         <ul>${itemsHtml}</ul>
         <hr />
         <p style="color: #888;">We’ll notify you once your items are shipped.</p>
-        <p>Regards,<br/>Desi-Etsy Team</p>
+        <p>Regards,<br/>Kalakaari Team</p>
       </div>
     `
   };

@@ -80,8 +80,8 @@ const PrivacyPolicyPage = () => {
                   <h3 className="font-medium text-gray-800 mb-2">Contact Us</h3>
                   <p className="text-gray-600">
                     For privacy concerns, email us at{' '}
-                    <a href="mailto:privacy@desi-etsy.com" className="text-orange-600 hover:underline">
-                      privacy@desi-etsy.com
+                    <a href="mailto:privacy@kalakaari.com" className="text-orange-600 hover:underline">
+                      privacy@kalakaari.com
                     </a>
                   </p>
                 </div>

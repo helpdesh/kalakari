@@ -118,8 +118,8 @@ const TermsConditionsPage = () => {
               <h3 className="font-medium text-gray-800 mb-2">Contact Us</h3>
               <p className="text-gray-600">
                 For questions about these terms, email{' '}
-                <a href="mailto:legal@desi-etsy.com" className="text-orange-600 hover:underline">
-                  legal@desi-etsy.com
+                <a href="mailto:legal@kalakaari.com" className="text-orange-600 hover:underline">
+                  legal@kalakaari.com
                 </a>
               </p>
             </div>

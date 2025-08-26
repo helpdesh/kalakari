@@ -78,7 +78,7 @@ const HomePage = () => {
           className="text-xl md:text-2xl font-bold text-orange-600 hover:underline"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          Desi-Etsy 🧵
+          Kalakaari 🧵
         </Link>
         
         {/* Mobile menu button */}
@@ -383,9 +383,9 @@ const HomePage = () => {
         <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* About Us */}
           <div id="about-us">
-            <h4 className="text-lg font-semibold mb-2">About Desi-Etsy</h4>
+            <h4 className="text-lg font-semibold mb-2">About Kalakaari</h4>
             <p className="text-sm text-gray-400">
-              Desi-Etsy is dedicated to celebrating India's rich heritage of craftsmanship. We connect talented artisans with customers nationwide, making it easy to discover and purchase authentic, handmade products.<br /><br />
+              Kalakaari is dedicated to celebrating India's rich heritage of craftsmanship. We connect talented artisans with customers nationwide, making it easy to discover and purchase authentic, handmade products.<br /><br />
               <span className="italic text-orange-300">Handmade. Heartmade. Just for you.</span>
             </p>
           </div>
@@ -446,7 +446,7 @@ const HomePage = () => {
           {/* Contact & Social */}
           <div>
             <h4 className="text-lg font-semibold mb-2">Contact</h4>
-            <p className="text-sm text-gray-400">📧 Email: rohitkumar.pr45@gmail.com</p>
+            <p className="text-sm text-gray-400">📧 Email: aryansharma7467@gmail.com</p>
             <p className="text-sm text-gray-400">📍 Location: India</p>
             <div className="flex gap-3 mt-3">
               <a href="https://instagram.com/" target="_blank" rel="noreferrer" aria-label="Instagram">
