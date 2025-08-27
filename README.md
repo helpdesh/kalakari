@@ -1,4 +1,4 @@
-# 🧵 Niche E-Commerce Platform for Handmade Products (Desi-Etsy)
+# 🧵 E-Commerce Platform for Handmade Products (Kalakaari)
 
 A full-featured MERN stack platform where artisans showcase handmade products, and customers can browse, buy, and track orders — tailored for a culturally rooted shopping experience.
 
@@ -65,42 +65,4 @@ A full-featured MERN stack platform where artisans showcase handmade products, a
 
 ---
 
-## 🔧 Environment Variables
 
-Create a `.env` file in the backend:
-
-```env
-PORT=5000
-MONGODB_URI=mongodb+srv://<your-cluster>.mongodb.net/desi-etsy
-JWT_SECRET=your_jwt_secret
-RAZORPAY_KEY_ID=your_key_id
-RAZORPAY_KEY_SECRET=your_key_secret
-
-## 🚀 How to Run Locally
-
-git clone https://github.com/your-username/niche-ecommerce-platform.git
-cd frontend && npm install
-cd ../backend && npm install
-
-
-Run
-frontend
->> npm start
-Backend
->> npx nodemon server.js
-
-npm run dev
-
-##📌 Future Improvements
-Full admin dashboard (manage users, orders, and products)
-Advanced search and category filtering
-Artisan verification system with document uploads
-Cloud image storage (e.g., Cloudinary)
-Mobile responsive improvements
-
-🙌 Acknowledgements
-Inspired by Etsy. Developed as a major academic project.
-
-📧 Contact
-Created by: Rohit Kumar
-📩 Email: rohitkumar.pr45@gmail.com
